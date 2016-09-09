@@ -1,2 +1,2 @@
 # qepcad
-Quantifier Elimination by Partial Cylindrical Decomposition
+**Quantifier Elimination** by **Partial Cylindrical Decomposition**
