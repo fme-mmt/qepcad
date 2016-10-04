@@ -34,6 +34,17 @@ class Stack:
     
     [Insert long description here]
     
+    getCell raises a StackCellOutOfBoundsError exception when index is below 0 or above length:
+    >>> from qepcad import *
+    >>> s = Stack()
+    >>> s.getCell(8)
+    Traceback (most recent call last):
+        ...
+    qepcad.StackCellOutOfBoundsError: Tried to get cell with index 8 for Stack of length 0
+    >>> s.getCell(-1)
+    Traceback (most recent call last):
+        ...
+    qepcad.StackCellOutOfBoundsError: Tried to get cell with index -1 for Stack of length 0
     """
 
     def __init__(self):
@@ -45,7 +56,7 @@ class Stack:
         self.cells = []
         
     def getCell(self, i: int) -> Cell:
-        if (i >= self.length):
+        if (i >= self.length or i < 0):
             raise StackCellOutOfBoundsError(self, i);
         return self.cells[i]
 
@@ -57,9 +68,11 @@ class StackCellOutOfBoundsError(Exception):
     def __init__(self, stack, index):
         self.stack = stack;
         self.index = index;
-        self.msg = ("Tried to get cell "+ str(index)
-                    + " for Stack " + repr(self.stack)
-                    + " of length " + str(self.stack.length));
+        # We should use standard unit testing for testing exceptions. 
+        # doctest checks if the correct exception is raise by comparing the message it prints.
+        # So if the excpetion message changes, the tests break. Not good :(
+        self.msg = ("Tried to get cell with index "+ str(index)
+                    + " for Stack of length " + str(self.stack.length));
     def __str__(self):
         return self.msg;
 
