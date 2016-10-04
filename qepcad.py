@@ -21,6 +21,7 @@ class Cell:
         # Add test to check dimension of sample against self.dimension
         self.sample = Point(0, 0)
 
+    # Should we add an exception if point.dimension != self.dimension?
     def containsPoint(self, point: Point) -> bool:
         # point should be of class Point from sympy geometry package
         # Do some magic here
