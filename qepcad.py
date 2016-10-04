@@ -2,6 +2,17 @@ from sympy import *
 from sympy.geometry import *
 
 class Cell:
+    """
+    CAD Cell
+    
+    [Insert long description here]
+    
+    Obviously, the sample point belongs to the cell:
+    >>> c = Cell()
+    >>> c.containsPoint(c.sample);
+    True
+    """
+
     def __init__(self):
     # Public instance variables
         self.dimension = 0
@@ -11,10 +22,17 @@ class Cell:
     def containsPoint(self, point: Point) -> bool:
         # point should be of class Point from sympy geometry package
         # Do some magic here
-        pass
-    
+        return False;
+
 
 class Stack:
+    """
+    CAD Stack
+    
+    [Insert long description here]
+    
+    """
+
     def __init__(self):
     # Public instance variables
         self.length = 0
