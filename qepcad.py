@@ -45,7 +45,23 @@ class Stack:
         self.cells = []
         
     def getCell(self, i: int) -> Cell:
-        return cells[i]
+        if (i >= self.length):
+            raise StackCellOutOfBoundsError(self, i);
+        return self.cells[i]
+
+class QepCadError:
+    def __str__(self):
+        return "QepCadError"
+
+class StackCellOutOfBoundsError:
+    def __init__(self, stack, index):
+        self.stack = stack;
+        self.index = index;
+        self.msg = ("Tried to get cell "+ index 
+                    + " for Stack " + repr(self.stack)
+                    + " of length " + str(self.cell.length));
+    def __str__(self):
+        return self.msg;
 
 
 # Execute doctest when run from the command line
