@@ -53,13 +53,13 @@ class QepCadError:
     def __str__(self):
         return "QepCadError"
 
-class StackCellOutOfBoundsError:
+class StackCellOutOfBoundsError(Exception):
     def __init__(self, stack, index):
         self.stack = stack;
         self.index = index;
-        self.msg = ("Tried to get cell "+ index 
+        self.msg = ("Tried to get cell "+ str(index)
                     + " for Stack " + repr(self.stack)
-                    + " of length " + str(self.cell.length));
+                    + " of length " + str(self.stack.length));
     def __str__(self):
         return self.msg;
 
