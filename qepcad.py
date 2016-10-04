@@ -25,3 +25,9 @@ class Stack:
         
     def getCell(self, i: int) -> Cell:
         return cells[i]
+
+
+# Execute doctest when run from the command line
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
