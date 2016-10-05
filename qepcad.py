@@ -79,14 +79,55 @@ class StackCellOutOfBoundsError(Exception):
 
 class Cad:
     def __init__(self):
-        pass;
+        self.dimension = 0;
     
     def containsPoint(self, point: Point) -> bool:
         pass;
     
+    def cellExists(self, index: list):
+        pass;
+    
     """ si index tiene n coordenadas, nos devuelve la celda n-dimensional correspondiente """
     def getCell(self, index: list):
+        pass;
+        
+    # metodo para añadir celdas (se usa en cada iteración para añadir las nuevas celdas)
 
+def cadExtension(self, cad, projectionFactorSet):
+    # para stack
+    #     para celda del stack
+    #         me construyo el nuevo stack sobre esta celda
+    #         y añado el nuevo stack en este mismo cad
+
+def stackConstruction(self, Cell, projectionFactorSet):
+    # construimos un nuevo conjunto P de polinomios del siguiente modo:
+    # para cada polinomio substituimos las k-1 variables por el punto muestra,
+    # de modo que obtenemos un polinomio de 1 variable.
+    # 
+    # para cada polinomio de P
+    #    buscamos las raíces de P. si obtenemos r raíces,
+    #    significa que construimos r+1 nuevas celdas de dimension cell.dimension+1 
+    #    i r celdas (las correspondientes a las raíces) de dimension cell.dimension
+    #    
+    #    para construir cada celda de dimension cell.dimension
+    #        c = Cell()
+    #        c.dimension = cell.dimension
+    #        c.sample = cell.sample | raiz ("concatencion de coordenada)
+    #
+    #    para construir cada celda de dimension cell.dimension+1
+    #        si primera o ultima celda
+    #            c = Cell()
+    #            c.dimension = cell.dimension+1
+    #            c.sample = cell.sample | raiz +- eps
+    #        si no
+    #            c = Cell()
+    #            c.dimension = cell.dimension+1
+    #            c.sample = cell.sample | punto medio entre raizes
+    #
+    #        
+    
+ # Hay que escribir funcion que construia cad caso base
+    
 # Execute doctest when run from the command line
 if __name__ == "__main__":
     import doctest
