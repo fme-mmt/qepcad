@@ -76,6 +76,15 @@ class StackCellOutOfBoundsError(Exception):
     def __str__(self):
         return self.msg;
 
+class Cad:
+    def __init__(self):
+        pass;
+    
+    def containsPoint(self, point: Point) -> bool:
+        pass;
+    
+    """ si index tiene n coordenadas, nos devuelve la celda n-dimensional correspondiente """
+    def getCell(self, list: index):
 
 # Execute doctest when run from the command line
 if __name__ == "__main__":
