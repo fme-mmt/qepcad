@@ -16,6 +16,7 @@ class Cell:
     def __init__(self):
     # Public instance variables
         self.dimension = 0
+        self.belongsToRegionProjection = 0;
         # Point does not handle 1D. Should we provide our own CellPoint class or interface?
         # Can we test against instance variables? Properties? Better write a getter method?
         # Add test to check dimension of sample against self.dimension
