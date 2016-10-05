@@ -85,7 +85,7 @@ class Cad:
         pass;
     
     """ si index tiene n coordenadas, nos devuelve la celda n-dimensional correspondiente """
-    def getCell(self, list: index):
+    def getCell(self, index: list):
 
 # Execute doctest when run from the command line
 if __name__ == "__main__":
