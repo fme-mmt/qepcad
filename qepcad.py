@@ -105,26 +105,39 @@ def stackConstruction(self, Cell, projectionFactorSet):
     # de modo que obtenemos un polinomio de 1 variable.
     # 
     # para cada polinomio de P
+    for p in projectionFactorSet:
+        p = substituir punt mostra 
     #    buscamos las raíces de P. si obtenemos r raíces,
     #    significa que construimos r+1 nuevas celdas de dimension cell.dimension+1 
     #    i r celdas (las correspondientes a las raíces) de dimension cell.dimension
-    #    
-    #    para construir cada celda de dimension cell.dimension
-    #        c = Cell()
-    #        c.dimension = cell.dimension
-    #        c.sample = cell.sample | raiz ("concatencion de coordenada)
-    #
-    #    para construir cada celda de dimension cell.dimension+1
-    #        si primera o ultima celda
-    #            c = Cell()
-    #            c.dimension = cell.dimension+1
-    #            c.sample = cell.sample | raiz +- eps
-    #        si no
-    #            c = Cell()
-    #            c.dimension = cell.dimension+1
-    #            c.sample = cell.sample | punto medio entre raizes
-    #
-    #        
+        r = arrels de p
+        cells = [];
+
+        # First cell
+        c = Cell()
+        c.dimension = cell.dimension + 1
+        c.sample = cell.sample | raiz - eps
+        cells.append(c)
+        
+        for i in range(1, 2*r.length):
+            c = Cell();
+            if i%2 == 0
+                c.dimension = cell.dimension
+                c.sample = cell.sample | raiz ("concatencion de coordenada")
+            else
+                c.dimension = cell.dimension + 1
+                c.sample = cell.sample | punto medio entre raizes
+                
+            cells.append(c)
+        
+        # Last cell
+        c = Cell()
+        c.dimension = cell.dimension + 1
+        c.sample = cell.sample | raiz + eps
+        cells.append(c)
+
+            
+                
     
  # Hay que escribir funcion que construia cad caso base
     
