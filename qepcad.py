@@ -51,7 +51,7 @@ class Stack:
     # Public instance variables
         self.length = 0
         self.dimension = 0
-        
+        self.originalCell = Cell()
     # Private instance variables
         self.cells = []
         
