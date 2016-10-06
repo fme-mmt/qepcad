@@ -27,7 +27,12 @@ class Cell:
         # point should be of class Point from sympy geometry package
         # Do some magic here
         return False;
-
+        
+    def addSamplePoint(self,point : Point):
+        self.sample = point;
+    
+    def addDimension(self,dimension: int):
+        self.dimension = dimension;
 
 class Stack:
     """
@@ -75,7 +80,9 @@ class StackCellOutOfBoundsError(Exception):
         self.msg = ("Tried to get cell with index "+ str(index)
                     + " for Stack of length " + str(self.stack.length));
     def __str__(self):
-        return self.msg;
+        return self.msg;  
+        
+
 
 class Cad:
     def __init__(self):
@@ -90,9 +97,13 @@ class Cad:
     """ si index tiene n coordenadas, nos devuelve la celda n-dimensional correspondiente """
     def getCell(self, index: list):
         pass;
-        
+    
     # metodo para añadir celdas (se usa en cada iteración para añadir las nuevas celdas)
-
+    #En un principio pondría la cabecera así, la implementación dependerá 
+    #de la estructura de datos que usemos.  
+    def addCell(self,cell: Cell):
+        pass;
+        
 def cadExtension(self, cad, projectionFactorSet):
     # para stack
     #     para celda del stack
@@ -100,6 +111,7 @@ def cadExtension(self, cad, projectionFactorSet):
     #         y añado el nuevo stack en este mismo cad
 
 def stackConstruction(self, Cell, projectionFactorSet):
+    
     # construimos un nuevo conjunto P de polinomios del siguiente modo:
     # para cada polinomio substituimos las k-1 variables por el punto muestra,
     # de modo que obtenemos un polinomio de 1 variable.
@@ -127,7 +139,48 @@ def stackConstruction(self, Cell, projectionFactorSet):
     #        
     
  # Hay que escribir funcion que construia cad caso base
+def baseCad:
+    #Tenemos n polinomios de una variable. A partir de sus r raíces
+    #obtenemos las primeras r+1 celdas
+    roots = [];
+    baseStack = Stack();
+    for p in polinomialSet:
+        #añado las raíces a el conjunto de raíces.
+        roots.append(solveset(p)); ## una vez tenga el formato de las cosas lo 
+                                    ## escribiré como toca
     
+    #ordeno las raíces para crear mi conjunto de indices.
+    roots.sort();
+    eps = 0.1;
+    j = 0;
+    for i in range(0,2*len(roots)+1):
+        cell = Cell();
+         #Añadimos los puntos muestra(que tienen solo una coordenada)
+        if(i == 0):
+            cell.addSamplePoint(roots[0]-eps);
+            cell.addDimension(1);
+            ++j;
+        
+        if(i == 2*len(roots)+1):
+            cell.addSamplePoint(roots[-1]+eps);
+            cell.addDimension(1);
+            continue;
+                
+        #si estamos en una celda par añade el punto medio, s no añade la raíz como punto muestra.
+        if(i%2==0):
+            cell.addDimension(1);
+            cell.addSamplePoint(roots[j]+roots[j+1])/2)
+            ++j;
+        else:
+            cell.addDimension(0);
+            cell.addSamplePoint(roots[j]);
+        
+       #ahora dentro de este mismo for tengo que añadir las celdas al stack
+        #base, que he olvidado declarar e indexarlas como toca.
+        
+            
+    
+         
 # Execute doctest when run from the command line
 if __name__ == "__main__":
     import doctest
