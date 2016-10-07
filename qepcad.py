@@ -13,14 +13,14 @@ class Cell:
     True
     """
 
-    def __init__(self):
+    def __init__(self, dimension, sample):
     # Public instance variables
-        self.dimension = 0
+        self.dimension = dimension
         self.belongsToRegionProjection = 0;
         # Point does not handle 1D. Should we provide our own CellPoint class or interface?
         # Can we test against instance variables? Properties? Better write a getter method?
         # Add test to check dimension of sample against self.dimension
-        self.sample = Point(0, 0)
+        self.sample = sample
 
     # Should we add an exception if point.dimension != self.dimension?
     def containsPoint(self, point: Point) -> bool:
@@ -99,7 +99,7 @@ def cadExtension(self, cad, projectionFactorSet):
     #         me construyo el nuevo stack sobre esta celda
     #         y añado el nuevo stack en este mismo cad
 
-def stackConstruction(self, Cell, projectionFactorSet):
+def stackConstruction(self, cell, projectionFactorSet):
     # construimos un nuevo conjunto P de polinomios del siguiente modo:
     # para cada polinomio substituimos las k-1 variables por el punto muestra,
     # de modo que obtenemos un polinomio de 1 variable.
@@ -114,33 +114,19 @@ def stackConstruction(self, Cell, projectionFactorSet):
         cells = [];
 
         # First cell
-        c = Cell()
-        c.dimension = cell.dimension + 1
-        c.sample = cell.sample.append(r[0] - eps)
-        cells.append(c)
+        firstCell = Cell(cell.dimension + 1, cell.dimension + 1)
+        cells.append(firstCell)
         
         for i in range(1, r.length-1):
-            cellRoot = Cell();
-            c.dimension = cell.dimension
-            c.sample = cell.sample.append(r[i])
+            cellRoot = Cell(cell.dimension, cell.sample.append(r[i]))
+            cellNext = Cell(cell.dimension + 1, cell.sample.append((r[i]+r[i+1]/2)))
+            cells.extend([cellRoot, cellNext])
             
-            cell = Cell()
-            c.dimension = cell.dimension + 1
-            c.sample = cell.sample.append(r[i]+r[i+1]/2)
-                
-            cells.append(cellRoot)
-            cells.append(cellNext)
-            
-        # Last root
-        c = Cell()
-        c.dimension = cell.dimension
-        c.sample = cell.sample.append(r[i])
+        cellLastRoot = Cell(cell.dimension, cell.sample.append(r[i]))
+        cells.append(cellLastRoot)
         
-        # Last cell
-        c = Cell()
-        c.dimension = cell.dimension + 1
-        c.sample = cell.sample.append(r[-1] + eps)
-        cells.append(c)
+        lastCell = Cell(cell.dimension + 1, cell.sample.append(r[-1] + eps))
+        cells.append(lastCell)
 
             
                 
