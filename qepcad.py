@@ -48,11 +48,11 @@ class Stack:
     qepcad.StackCellOutOfBoundsError: Tried to get cell with index -1 for Stack of length 0
     """
 
-    def __init__(self, originalCell, stackCells):
+    def __init__(self, baseCell, stackCells):
     # Public instance variables
         self.length = 0
         self.dimension = 0
-        self.originalCell = originalCell
+        self.baseCell = baseCell
     # Private instance variables
         self.cells = stackCells
         
