@@ -110,27 +110,30 @@ def stackConstruction(self, cell, projectionFactorSet):
     #    buscamos las raíces de P. si obtenemos r raíces,
     #    significa que construimos r+1 nuevas celdas de dimension cell.dimension+1 
     #    i r celdas (las correspondientes a las raíces) de dimension cell.dimension
-        r = arrels de p
+        roots = arrels de p
+    
+        constructStackCells(cell, roots)
+
+def constructStackCells(baseCell, roots):
         cells = [];
 
         # First cell
-        firstCell = Cell(cell.dimension + 1, cell.dimension + 1)
+        firstCell = Cell(baseCell.dimension + 1, baseCell.sample.append(roots[0] + eps))
         cells.append(firstCell)
         
-        for i in range(1, r.length-1):
-            cellRoot = Cell(cell.dimension, cell.sample.append(r[i]))
-            cellNext = Cell(cell.dimension + 1, cell.sample.append((r[i]+r[i+1]/2)))
+        for i in range(1, roots.length-1):
+            cellRoot = Cell(baseCell.dimension, baseCell.sample.append(roots[i]))
+            cellNext = Cell(baseCell.dimension + 1, baseCell.sample.append((roots[i]+roots[i+1]/2)))
             cells.extend([cellRoot, cellNext])
             
-        cellLastRoot = Cell(cell.dimension, cell.sample.append(r[i]))
+        cellLastRoot = Cell(baseCell.dimension, baseCell.sample.append(roots[i]))
         cells.append(cellLastRoot)
         
-        lastCell = Cell(cell.dimension + 1, cell.sample.append(r[-1] + eps))
+        lastCell = Cell(baseCell.dimension + 1, baseCell.sample.append(roots[-1] + eps))
         cells.append(lastCell)
+        
+        return cells
 
-            
-                
-    
  # Hay que escribir funcion que construia cad caso base
     
 # Execute doctest when run from the command line
