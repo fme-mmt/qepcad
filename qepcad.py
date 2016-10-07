@@ -48,13 +48,13 @@ class Stack:
     qepcad.StackCellOutOfBoundsError: Tried to get cell with index -1 for Stack of length 0
     """
 
-    def __init__(self):
+    def __init__(self, originalCell, stackCells):
     # Public instance variables
         self.length = 0
         self.dimension = 0
-        self.originalCell = Cell()
+        self.originalCell = originalCell
     # Private instance variables
-        self.cells = []
+        self.cells = stackCells
         
     def getCell(self, i: int) -> Cell:
         if (i >= self.length or i < 0):
@@ -105,14 +105,16 @@ def stackConstruction(self, cell, projectionFactorSet):
     # de modo que obtenemos un polinomio de 1 variable.
     # 
     # para cada polinomio de P
+    roots = []
     for p in projectionFactorSet:
         p = substituir punt mostra 
     #    buscamos las raíces de P. si obtenemos r raíces,
     #    significa que construimos r+1 nuevas celdas de dimension cell.dimension+1 
     #    i r celdas (las correspondientes a las raíces) de dimension cell.dimension
-        roots = arrels de p
+        roots.extend(arrels de p)
     
-        constructStackCells(cell, roots)
+    stackCells = constructStackCells(cell, roots)
+    return Stack(cell, stackCells)
 
 def constructStackCells(baseCell, roots):
         cells = [];
