@@ -116,24 +116,30 @@ def stackConstruction(self, Cell, projectionFactorSet):
         # First cell
         c = Cell()
         c.dimension = cell.dimension + 1
-        c.sample = cell.sample | raiz - eps
+        c.sample = cell.sample.append(r[0] - eps)
         cells.append(c)
         
-        for i in range(1, 2*r.length):
-            c = Cell();
-            if i%2 == 0
-                c.dimension = cell.dimension
-                c.sample = cell.sample | raiz ("concatencion de coordenada")
-            else
-                c.dimension = cell.dimension + 1
-                c.sample = cell.sample | punto medio entre raizes
+        for i in range(1, r.length-1):
+            cellRoot = Cell();
+            c.dimension = cell.dimension
+            c.sample = cell.sample.append(r[i])
+            
+            cell = Cell()
+            c.dimension = cell.dimension + 1
+            c.sample = cell.sample.append(r[i]+r[i+1]/2)
                 
-            cells.append(c)
+            cells.append(cellRoot)
+            cells.append(cellNext)
+            
+        # Last root
+        c = Cell()
+        c.dimension = cell.dimension
+        c.sample = cell.sample.append(r[i])
         
         # Last cell
         c = Cell()
         c.dimension = cell.dimension + 1
-        c.sample = cell.sample | raiz + eps
+        c.sample = cell.sample.append(r[-1] + eps)
         cells.append(c)
 
             
