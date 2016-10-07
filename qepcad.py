@@ -13,14 +13,20 @@ class Cell:
     True
     """
 
-    def __init__(self, dimension, sample):
+    def __init__(self, stack, positionInStack, sample):
     # Public instance variables
-        self.dimension = dimension
-        self.belongsToRegionProjection = 0;
+        self.stack = stack
+        self.positionInStack = positionInStack
+        
+        #self.belongsToRegionProjection = 0;
+        
         # Point does not handle 1D. Should we provide our own CellPoint class or interface?
         # Can we test against instance variables? Properties? Better write a getter method?
         # Add test to check dimension of sample against self.dimension
         self.sample = sample
+
+    def dimension(self):
+        pass
 
     # Should we add an exception if point.dimension != self.dimension?
     def containsPoint(self, point: Point) -> bool:
