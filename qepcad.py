@@ -13,7 +13,7 @@ class Cell:
     True
     """
 
-    def __init__(self, stack, positionInStack, sample):
+    def __init__(self, stack, positionInStack):
     # Public instance variables
         self.stack = stack
         self.positionInStack = positionInStack
@@ -23,7 +23,6 @@ class Cell:
         # Point does not handle 1D. Should we provide our own CellPoint class or interface?
         # Can we test against instance variables? Properties? Better write a getter method?
         # Add test to check dimension of sample against self.dimension
-        self.sample = sample
 
     def dimension(self):
         pass
