@@ -17,6 +17,7 @@ class Cell:
     # Public instance variables
         self.stack = stack
         self.positionInStack = positionInStack
+        self.cad = stack.cad
         
         #self.belongsToRegionProjection = 0;
         
@@ -26,6 +27,13 @@ class Cell:
 
     def dimension(self):
         pass
+    
+    def samplePoint(self):
+        if self.sample: # check syntax here, how to tell if variable null in python?
+            pass
+        else
+            # here we need the projection factor set, which should be a member of Cad
+            # se we need a pointer to the Cad the cell belongs to
 
     # Should we add an exception if point.dimension != self.dimension?
     def containsPoint(self, point: Point) -> bool:
@@ -58,6 +66,8 @@ class Stack:
         self.length = 0
         self.dimension = 0
         self.baseCell = baseCell
+        self.cad = baseCell.cad # hot to handle the first stack? 
+                                # Somehow we'll have to set this directly. Subclass? Another init?
     # Private instance variables
         self.cells = stackCells
         
