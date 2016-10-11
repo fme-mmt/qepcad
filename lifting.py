@@ -28,11 +28,6 @@ class Cell:
         # Do some magic here
         return False;
         
-    def addSamplePoint(self,point : Point):
-        self.sample = point;
-    
-    def addDimension(self,dimension: int):
-        self.dimension = dimension;
 
 class Stack:
     """
@@ -62,9 +57,11 @@ class Stack:
         self.cells = []
         
     def getCell(self, i: int) -> Cell:
-        if (i >= self.length or i < 0):
+        if i >= self.length or i < 0:
             raise StackCellOutOfBoundsError(self, i);
         return self.cells[i]
+    
+
 
 class QepCadError:
     def __str__(self):
@@ -72,21 +69,21 @@ class QepCadError:
 
 class StackCellOutOfBoundsError(Exception):
     def __init__(self, stack, index):
-        self.stack = stack;
-        self.index = index;
+        self.stack = stack
+        self.index = index
         # We should use standard unit testing for testing exceptions. 
         # doctest checks if the correct exception is raise by comparing the message it prints.
         # So if the excpetion message changes, the tests break. Not good :(
         self.msg = ("Tried to get cell with index "+ str(index)
-                    + " for Stack of length " + str(self.stack.length));
+                    + " for Stack of length " + str(self.stack.length))
     def __str__(self):
-        return self.msg;  
+        return self.msg
         
 
 
 class Cad:
     def __init__(self):
-        self.dimension = 0;
+        self.dimension = 0
     
     def containsPoint(self, point: Point) -> bool:
         pass;
@@ -99,8 +96,7 @@ class Cad:
         pass;
     
     # metodo para añadir celdas (se usa en cada iteración para añadir las nuevas celdas)
-    #En un principio pondría la cabecera así, la implementación dependerá 
-    #de la estructura de datos que usemos.  
+    #Lo he pensado y me parece más cómodo ponerlo como un método de Stack 
     def addCell(self,cell: Cell):
         pass;
         
@@ -146,37 +142,38 @@ def baseCad:
     baseStack = Stack();
     for p in polinomialSet:
         #añado las raíces a el conjunto de raíces.
-        roots.append(solveset(p)); ## una vez tenga el formato de las cosas lo 
+        roots.append(solveset(p)) ## una vez tenga el formato de las cosas lo
                                     ## escribiré como toca
     
     #ordeno las raíces para crear mi conjunto de indices.
-    roots.sort();
-    eps = 0.1;
-    j = 0;
+    roots.sort()
+    
+    eps = 0.1
+    j = 0
     for i in range(0,2*len(roots)+1):
-        cell = Cell();
+        cell = Cell()
          #Añadimos los puntos muestra(que tienen solo una coordenada)
-        if(i == 0):
-            cell.addSamplePoint(roots[0]-eps);
-            cell.addDimension(1);
-            ++j;
+        if i == 0:
+            cell.sample=roots[0]-eps
+            cell.dimension = 1
+            j += 1
         
-        if(i == 2*len(roots)+1):
-            cell.addSamplePoint(roots[-1]+eps);
-            cell.addDimension(1);
-            continue;
+        if i == 2*len(roots)+1 :
+            cell.sample=roots[-1]+eps
+            cell.dimension=1
+            continue
                 
-        #si estamos en una celda par añade el punto medio, s no añade la raíz como punto muestra.
-        if(i%2==0):
-            cell.addDimension(1);
-            cell.addSamplePoint(roots[j]+roots[j+1])/2)
-            ++j;
+        #si estamos en una celda par añade el punto medio, si no añade la raíz como punto muestra.
+        if i%2==0 :
+            cell.dimension = 1
+            cell.sample = (roots[j]+roots[j+1])/2
+            j+=1
         else:
-            cell.addDimension(0);
-            cell.addSamplePoint(roots[j]);
+            cell.dimension = 0
+            cell.sample =roots[j]
         
-       #ahora dentro de este mismo for tengo que añadir las celdas al stack
-        #base, que he olvidado declarar e indexarlas como toca.
+        baseStack.cells.append(cell)
+       
         
             
     
