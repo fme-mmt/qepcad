@@ -84,7 +84,8 @@ class StackCellOutOfBoundsError(Exception):
 class Cad:
     def __init__(self):
         self.dimension = 0
-    
+        self.cells = []
+
     def containsPoint(self, point: Point) -> bool:
         pass;
     
@@ -96,15 +97,22 @@ class Cad:
         pass;
     
     # metodo para añadir celdas (se usa en cada iteración para añadir las nuevas celdas)
-    #Lo he pensado y me parece más cómodo ponerlo como un método de Stack 
+
     def addCell(self,cell: Cell):
-        pass;
+        self.cells.append(cell)
+        self.dimension = cell.dimension
+
         
 def cadExtension(self, cad, projectionFactorSet):
     # para stack
     #     para celda del stack
-    #         me construyo el nuevo stack sobre esta celda
-    #         y añado el nuevo stack en este mismo cad
+
+    #igual esto sería al reves
+    #para cada celda del cad
+    for cell in cad.cells:
+        #construyo el nuevo stack sobre esta celda y añado el nuevo stack en este mismo cad
+        cad.addCell(stackConstruction(self,cell,projectionFactorSet))
+
 
 def stackConstruction(self, Cell, projectionFactorSet):
     
@@ -135,12 +143,12 @@ def stackConstruction(self, Cell, projectionFactorSet):
     #        
     
  # Hay que escribir funcion que construia cad caso base
-def baseCad:
+def baseCad(self,projectionFactorSet):
     #Tenemos n polinomios de una variable. A partir de sus r raíces
     #obtenemos las primeras r+1 celdas
-    roots = [];
-    baseStack = Stack();
-    for p in polinomialSet:
+    roots = []
+    baseCad = Cad()
+    for p in projectionFactorSet:
         #añado las raíces a el conjunto de raíces.
         roots.append(solveset(p)) ## una vez tenga el formato de las cosas lo
                                     ## escribiré como toca
@@ -159,8 +167,8 @@ def baseCad:
             j += 1
         
         if i == 2*len(roots)+1 :
-            cell.sample=roots[-1]+eps
-            cell.dimension=1
+            cell.sample = roots[-1]+eps
+            cell.dimension = 1
             continue
                 
         #si estamos en una celda par añade el punto medio, si no añade la raíz como punto muestra.
@@ -170,9 +178,11 @@ def baseCad:
             j+=1
         else:
             cell.dimension = 0
-            cell.sample =roots[j]
+            cell.sample = roots[j]
         
-        baseStack.cells.append(cell)
+        baseCad.addCell(cell)
+
+    return baseCad
        
         
             
