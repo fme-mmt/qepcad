@@ -122,14 +122,11 @@ def stackConstruction(self, cell, projectionFactorSet):
     # para cada polinomio de P
     roots = []
     for p in projectionFactorSet:
-        # p = substituir punt mostra 
-        p.eject(lastvariable).eval(puntmostra)
-        p.eval({x: 2, y:3}) #alternativa
-        p.eval((2, 3)) #aquesta es la bona
+        q = p.eval(cell.samplePoint())
     #    buscamos las raíces de P. si obtenemos r raíces,
     #    significa que construimos r+1 nuevas celdas de dimension cell.dimension+1 
     #    i r celdas (las correspondientes a las raíces) de dimension cell.dimension
-        roots.extend(p.all_roots())
+        roots.extend(q.all_roots())
     
     stackCells = constructStackCells(cell, roots)
     return Stack(cell, stackCells)
