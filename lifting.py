@@ -40,7 +40,7 @@ class Cell:
         # point should be of class Point from sympy geometry package
         # Do some magic here
         return False;
-
+        
 
 class Stack:
     """
@@ -72,9 +72,11 @@ class Stack:
         self.cells = stackCells
         
     def getCell(self, i: int) -> Cell:
-        if (i >= self.length or i < 0):
+        if i >= self.length or i < 0:
             raise StackCellOutOfBoundsError(self, i);
         return self.cells[i]
+    
+
 
 class QepCadError:
     def __str__(self):
@@ -82,20 +84,23 @@ class QepCadError:
 
 class StackCellOutOfBoundsError(Exception):
     def __init__(self, stack, index):
-        self.stack = stack;
-        self.index = index;
+        self.stack = stack
+        self.index = index
         # We should use standard unit testing for testing exceptions. 
         # doctest checks if the correct exception is raise by comparing the message it prints.
         # So if the excpetion message changes, the tests break. Not good :(
         self.msg = ("Tried to get cell with index "+ str(index)
-                    + " for Stack of length " + str(self.stack.length));
+                    + " for Stack of length " + str(self.stack.length))
     def __str__(self):
-        return self.msg;
+        return self.msg
+        
+
 
 class Cad:
     def __init__(self):
-        self.dimension = 0;
-    
+        self.dimension = 0
+        self.cells = []
+
     def containsPoint(self, point: Point) -> bool:
         pass;
     
@@ -105,16 +110,29 @@ class Cad:
     """ si index tiene n coordenadas, nos devuelve la celda n-dimensional correspondiente """
     def getCell(self, index: list):
         pass;
-        
+    
     # metodo para añadir celdas (se usa en cada iteración para añadir las nuevas celdas)
 
+    def addCell(self,cell: Cell):
+        self.cells.append(cell)
+        self.dimension = cell.dimension
+
+        
 def cadExtension(self, cad, projectionFactorSet):
     # para stack
     #     para celda del stack
     #         me construyo el nuevo stack sobre esta celda
     #         y añado el nuevo stack en este mismo cad
 
+    #igual esto sería al reves
+    #para cada celda del cad
+    for cell in cad.cells:
+        #construyo el nuevo stack sobre esta celda y añado el nuevo stack en este mismo cad
+        cad.addCell(stackConstruction(self,cell,projectionFactorSet))
+
+
 def stackConstruction(self, cell, projectionFactorSet):
+    
     # construimos un nuevo conjunto P de polinomios del siguiente modo:
     # para cada polinomio substituimos las k-1 variables por el punto muestra,
     # de modo que obtenemos un polinomio de 1 variable.
@@ -152,7 +170,51 @@ def constructStackCells(baseCell, roots):
         return cells
 
  # Hay que escribir funcion que construia cad caso base
+def baseCad(self,projectionFactorSet):
+    #Tenemos n polinomios de una variable. A partir de sus r raíces
+    #obtenemos las primeras r+1 celdas
+    roots = []
+    baseCad = Cad()
+    for p in projectionFactorSet:
+        #añado las raíces a el conjunto de raíces.
+        roots.append(solveset(p)) ## una vez tenga el formato de las cosas lo
+                                    ## escribiré como toca
     
+    #ordeno las raíces para crear mi conjunto de indices.
+    roots.sort()
+    
+    eps = 0.1
+    j = 0
+    for i in range(0,2*len(roots)+1):
+        cell = Cell()
+         #Añadimos los puntos muestra(que tienen solo una coordenada)
+        if i == 0:
+            cell.sample=roots[0]-eps
+            cell.dimension = 1
+            j += 1
+        
+        if i == 2*len(roots)+1 :
+            cell.sample = roots[-1]+eps
+            cell.dimension = 1
+            continue
+                
+        #si estamos en una celda par añade el punto medio, si no añade la raíz como punto muestra.
+        if i%2==0 :
+            cell.dimension = 1
+            cell.sample = (roots[j]+roots[j+1])/2
+            j+=1
+        else:
+            cell.dimension = 0
+            cell.sample = roots[j]
+        
+        baseCad.addCell(cell)
+
+    return baseCad
+       
+        
+            
+    
+         
 # Execute doctest when run from the command line
 if __name__ == "__main__":
     import doctest
