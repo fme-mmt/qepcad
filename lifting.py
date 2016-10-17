@@ -68,7 +68,7 @@ class Stack:
         self.baseCell = baseCell
         self.cad = baseCell.cad  # hot to handle the first stack?
                                 # Somehow we'll have to set this directly. Subclass? Another init?
-        roots = []
+        self.roots = []
         for p in projectionFactorSet:
             q = p.eval(baseCell.getSamplePoint())
             roots.extend(q.all_roots())
@@ -170,8 +170,7 @@ def baseCad(projectionFactorSet):
     baseCad = Cad()
     for p in projectionFactorSet:
         # añado las raíces a el conjunto de raíces.
-        roots.append(solveset(p))  # # una vez tenga el formato de las cosas lo
-                                    # # escribiré como toca
+        roots.append(p.all_roots())
 
     # ordeno las raíces para crear mi conjunto de indices.
     roots.sort()
@@ -185,12 +184,12 @@ def baseCad(projectionFactorSet):
             cell = Cell(1, roots[0] - eps, stack)
             j += 1
 
-        if i == 2 * len(roots) + 1 :
+        if i == 2 * len(roots) + 1:
             cell = Cell(1, roots[-1] + eps, stack)
             continue
 
         # si estamos en una celda par añade el punto medio, si no añade la raíz como punto muestra.
-        if i % 2 == 0 :
+        if i % 2 == 0:
             cell = Cell(1, (roots[j] + roots[j + 1]) / 2)
             j += 1
         else:
