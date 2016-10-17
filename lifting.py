@@ -176,7 +176,7 @@ def baseCad(projectionFactorSet):
     # ordeno las raíces para crear mi conjunto de indices.
     roots.sort()
 
-    stack = 0 # this is a hack, which stack shall we put here?
+    stack = 0  # this is a hack, which stack shall we put here?
     eps = 0.1
     j = 0
     for i in range(0, 2 * len(roots) + 1):
@@ -191,7 +191,7 @@ def baseCad(projectionFactorSet):
 
         # si estamos en una celda par añade el punto medio, si no añade la raíz como punto muestra.
         if i % 2 == 0 :
-            cell = Cell(1, (roots[j] + roots[j + 1]) / 2))
+            cell = Cell(1, (roots[j] + roots[j + 1]) / 2)
             j += 1
         else:
             cell = Cell(0, roots[j])
