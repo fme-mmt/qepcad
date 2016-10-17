@@ -172,7 +172,7 @@ def constructStackCells(baseCell, roots):
         return cells
 
  # Hay que escribir funcion que construia cad caso base
-def baseCad(self, projectionFactorSet):
+def baseCad(projectionFactorSet):
     """
     Constructing a base cad for a polinomial gives us a cad of dimension 1
     (intervals and points)
