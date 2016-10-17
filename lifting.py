@@ -228,4 +228,5 @@ def baseCad(self, projectionFactorSet):
 if __name__ == "__main__":
     import sympy.polys
     import doctest
+    x, y, z = symbols('x y z')
     doctest.testmod()
