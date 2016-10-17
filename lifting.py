@@ -116,7 +116,7 @@ class Cad:
 
     def addCell(self,cell: Cell):
         self.cells.append(cell)
-        if self.dimension < cell.dimension
+        if self.dimension < cell.dimension:
             self.dimension = cell.dimension
 
         
