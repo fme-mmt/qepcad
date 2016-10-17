@@ -29,11 +29,12 @@ class Cell:
         pass
     
     def samplePoint(self):
-        if self.sample: # check syntax here, how to tell if variable null in python?
-            pass
-        else
-            # here we need the projection factor set, which should be a member of Cad
-            # se we need a pointer to the Cad the cell belongs to
+        pass
+#         if self.sample: # check syntax here, how to tell if variable null in python?
+#             pass
+#         else
+#             # here we need the projection factor set, which should be a member of Cad
+#             # se we need a pointer to the Cad the cell belongs to
 
     # Should we add an exception if point.dimension != self.dimension?
     def containsPoint(self, point: Point) -> bool:
@@ -132,6 +133,9 @@ def cadExtension(self, cad, projectionFactorSet):
 
 
 def stackConstruction(self, cell, projectionFactorSet):
+    """
+    >>> cell = 
+    """
     
     # construimos un nuevo conjunto P de polinomios del siguiente modo:
     # para cada polinomio substituimos las k-1 variables por el punto muestra,
