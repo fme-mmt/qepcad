@@ -13,10 +13,12 @@ class Cell:
 #     True
 #     """
 
-    def __init__(self, stack, positionInStack):
+    def __init__(self, dimension, sample, stack):
     # Public instance variables
+        self.dimension = dimension
+        self.sample = sample
         self.stack = stack
-        self.positionInStack = positionInStack
+        # self.positionInStack = 0
         self.cad = stack.cad
 
         # self.belongsToRegionProjection = 0;
@@ -25,11 +27,11 @@ class Cell:
         # Can we test against instance variables? Properties? Better write a getter method?
         # Add test to check dimension of sample against self.dimension
 
-    def dimension(self):
-        pass
+    def getDimension(self):
+        return self.dimension
 
-    def samplePoint(self):
-        pass
+    def getSamplePoint(self):
+        return self.sample
 #         if self.sample: # check syntax here, how to tell if variable null in python?
 #             pass
 #         else
@@ -68,7 +70,7 @@ class Stack:
                                 # Somehow we'll have to set this directly. Subclass? Another init?
         roots = []
         for p in projectionFactorSet:
-            q = p.eval(cell.samplePoint())
+            q = p.eval(baseCell.getSamplePoint())
             roots.extend(q.all_roots())
         self.cells = self.constructStackCells(roots)
 
@@ -79,22 +81,22 @@ class Stack:
 
         # First cell
         firstCell = Cell(self.baseCell.dimension + 1,
-                         self.fbaseCell.sample.append(roots[0] + eps))
+                         self.fbaseCell.sample.append(roots[0] + eps), self)
         cells.append(firstCell)
 
         for i in range(1, roots.length - 1):
             cellRoot = Cell(self.baseCell.dimension,
-                            self.baseCell.sample.append(roots[i]))
+                            self.baseCell.sample.append(roots[i]), self)
             cellNext = Cell(self.baseCell.dimension + 1,
-                            self.baseCell.sample.append((roots[i] + roots[i + 1] / 2)))
+                            self.baseCell.sample.append((roots[i] + roots[i + 1] / 2)), self)
             cells.extend([cellRoot, cellNext])
 
         cellLastRoot = Cell(self.baseCell.dimension,
-                            self.baseCell.sample.append(roots[i]))
+                            self.baseCell.sample.append(roots[i]), self)
         cells.append(cellLastRoot)
 
         lastCell = Cell(self.baseCell.dimension + 1,
-                        self.baseCell.sample.append(roots[-1] + eps))
+                        self.baseCell.sample.append(roots[-1] + eps), self)
         cells.append(lastCell)
 
         return cells
