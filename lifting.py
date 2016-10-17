@@ -2,16 +2,16 @@ from sympy import *
 from sympy.geometry import *
 
 class Cell:
-    """
-    CAD Cell
-    
-    [Insert long description here]
-    
-    Obviously, the sample point belongs to the cell:
-    >>> c = Cell()
-    >>> c.containsPoint(c.sample);
-    True
-    """
+#     """
+#     CAD Cell
+#     
+#     [Insert long description here]
+#     
+#     Obviously, the sample point belongs to the cell:
+#     >>> c = Cell()
+#     >>> c.containsPoint(c.sample);
+#     True
+#     """
 
     def __init__(self, stack, positionInStack):
     # Public instance variables
@@ -44,23 +44,23 @@ class Cell:
         
 
 class Stack:
-    """
-    CAD Stack
-    
-    [Insert long description here]
-    
-    getCell raises a StackCellOutOfBoundsError exception when index is below 0 or above length:
-    >>> from qepcad import *
-    >>> s = Stack()
-    >>> s.getCell(8)
-    Traceback (most recent call last):
-        ...
-    qepcad.StackCellOutOfBoundsError: Tried to get cell with index 8 for Stack of length 0
-    >>> s.getCell(-1)
-    Traceback (most recent call last):
-        ...
-    qepcad.StackCellOutOfBoundsError: Tried to get cell with index -1 for Stack of length 0
-    """
+#     """
+#     CAD Stack
+#     
+#     [Insert long description here]
+#     
+#     getCell raises a StackCellOutOfBoundsError exception when index is below 0 or above length:
+#     >>> from qepcad import *
+#     >>> s = Stack()
+#     >>> s.getCell(8)
+#     Traceback (most recent call last):
+#         ...
+#     qepcad.StackCellOutOfBoundsError: Tried to get cell with index 8 for Stack of length 0
+#     >>> s.getCell(-1)
+#     Traceback (most recent call last):
+#         ...
+#     qepcad.StackCellOutOfBoundsError: Tried to get cell with index -1 for Stack of length 0
+#     """
 
     def __init__(self, baseCell, stackCells):
     # Public instance variables
@@ -133,9 +133,6 @@ def cadExtension(self, cad, projectionFactorSet):
 
 
 def stackConstruction(self, cell, projectionFactorSet):
-    """
-    >>> cell = 
-    """
     
     # construimos un nuevo conjunto P de polinomios del siguiente modo:
     # para cada polinomio substituimos las k-1 variables por el punto muestra,
