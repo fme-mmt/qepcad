@@ -170,7 +170,14 @@ def constructStackCells(baseCell, roots):
         return cells
 
  # Hay que escribir funcion que construia cad caso base
-def baseCad(self,projectionFactorSet):
+def baseCad(self, projectionFactorSet):
+    """
+    Constructing a base cad for a polinomial gives us a cad of dimension 1
+    (intervals and points)
+    >>> cad = baseCad([Poly(x**2-1)])
+    >>> cad.dimension
+    1
+    """
     #Tenemos n polinomios de una variable. A partir de sus r raíces
     #obtenemos las primeras r+1 celdas
     roots = []
@@ -217,5 +224,6 @@ def baseCad(self,projectionFactorSet):
          
 # Execute doctest when run from the command line
 if __name__ == "__main__":
+    import sympy.polys
     import doctest
     doctest.testmod()
