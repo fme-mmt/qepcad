@@ -176,29 +176,25 @@ def baseCad(projectionFactorSet):
     # ordeno las raíces para crear mi conjunto de indices.
     roots.sort()
 
+    stack = 0 # this is a hack, which stack shall we put here?
     eps = 0.1
     j = 0
     for i in range(0, 2 * len(roots) + 1):
-        cell = Cell()
          # Añadimos los puntos muestra(que tienen solo una coordenada)
         if i == 0:
-            cell.sample = roots[0] - eps
-            cell.dimension = 1
+            cell = Cell(1, roots[0] - eps, stack)
             j += 1
 
         if i == 2 * len(roots) + 1 :
-            cell.sample = roots[-1] + eps
-            cell.dimension = 1
+            cell = Cell(1, roots[-1] + eps, stack)
             continue
 
         # si estamos en una celda par añade el punto medio, si no añade la raíz como punto muestra.
         if i % 2 == 0 :
-            cell.dimension = 1
-            cell.sample = (roots[j] + roots[j + 1]) / 2
+            cell = Cell(1, (roots[j] + roots[j + 1]) / 2))
             j += 1
         else:
-            cell.dimension = 0
-            cell.sample = roots[j]
+            cell = Cell(0, roots[j])
 
         baseCad.addCell(cell)
 
