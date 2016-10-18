@@ -78,7 +78,7 @@ class Stack:
     # Private method
     def constructStackCells(self, roots):
         cells = [];
-
+        
         # First cell
         firstCell = Cell(self.baseCell.dimension + 1,
                          self.fbaseCell.sample.append(roots[0] + eps), self)
@@ -141,7 +141,7 @@ class Cad:
             self.dimension = cell.dimension
 
 
-def cadExtension(self, cad, projectionFactorSet):
+def cadExtension(cad, projectionFactorSet):
     # para stack
     #     para celda del stack
     #         me construyo el nuevo stack sobre esta celda
@@ -151,7 +151,11 @@ def cadExtension(self, cad, projectionFactorSet):
     # para cada celda del cad
     for cell in cad.cells:
         # construyo el nuevo stack sobre esta celda y añado el nuevo stack en este mismo cad
-        cad.addCell(stackConstruction(self, cell, projectionFactorSet))
+        stack = Stack(cell, projectionFactorSet)
+        for stackCell in stack.cells:
+            cad.addCell(stackCell)
+
+    return cad
 
 
 
