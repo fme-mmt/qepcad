@@ -78,10 +78,11 @@ class Stack:
     # Private method
     def constructStackCells(self, roots):
         cells = [];
-        
+        # declaro eps con un valor arbitrario para que compile
+        eps = 0.1
         # First cell
         firstCell = Cell(self.baseCell.dimension + 1,
-                         self.fbaseCell.sample.append(roots[0] + eps), self)
+                         self.fbaseCell.sample.append(roots[0] - eps), self)
         cells.append(firstCell)
 
         for i in range(1, roots.length - 1):
@@ -158,8 +159,7 @@ def cadExtension(cad, projectionFactorSet):
     return cad
 
 
-
- # Hay que escribir funcion que construia cad caso base
+# Hay que escribir funcion que construia cad caso base
 def baseCad(projectionFactorSet):
     """
     Constructing a base cad for a polinomial gives us a cad of dimension 1
