@@ -78,7 +78,7 @@ class Stack:
 
     # Private method
     def constructStackCells(self, roots):
-        cells = [];
+        cells = []
         # declaro eps con un valor arbitrario para que compile
         eps = 0.1
         # First cell
@@ -94,7 +94,7 @@ class Stack:
             cells.extend([cellRoot, cellNext])
 
         cellLastRoot = Cell(self.baseCell.dimension,
-                            self.baseCell.sample.append(roots[i]), self)
+                            self.baseCell.sample.append(roots[-1]), self)
         cells.append(cellLastRoot)
 
         lastCell = Cell(self.baseCell.dimension + 1,
@@ -105,7 +105,7 @@ class Stack:
 
 
     def getCad(self):
-        return self.cad;
+        return self.cad
 
     def getBaseCell(self):
         return self.baseCell
@@ -180,7 +180,7 @@ def baseCad(projectionFactorSet):
     # ordeno las raíces para crear mi conjunto de indices.
     roots.sort()
 
-    stack = 0  # this is a hack, which stack shall we put here?
+    stack = (None, projectionFactorSet)  # this is a hack, which stack shall we put here?
     eps = 0.1
     j = 0
     for i in range(0, 2 * len(roots) + 1):
