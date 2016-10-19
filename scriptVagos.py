@@ -9,7 +9,7 @@ stack = Stack(None, [polin1, polin2])
 for c in stack.cells:
     print(c.dimension)
 
-print("\n")
+print("")
 
 for c in stack.cells:
     print(c.sample)
@@ -25,7 +25,7 @@ stack2 = Stack(None, [polin3])
 for c in stack2.cells:
     print(c.dimension)
 
-print("\n")
+print("")
 
 for c in stack2.cells:
     print(c.sample)

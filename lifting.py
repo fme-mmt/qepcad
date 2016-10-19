@@ -46,27 +46,48 @@ class Cell:
 
 
 class Stack:
-#     """
-#     CAD Stack
-#
-#     [Insert long description here]
-#
-#     getCell raises a StackCellOutOfBoundsError exception when index is below 0 or above length:
-#     >>> from qepcad import *
-#     >>> s = Stack()
-#     >>> s.getCell(8)
-#     Traceback (most recent call last):
-#         ...
-#     qepcad.StackCellOutOfBoundsError: Tried to get cell with index 8 for Stack of length 0
-#     >>> s.getCell(-1)
-#     Traceback (most recent call last):
-#         ...
-#     qepcad.StackCellOutOfBoundsError: Tried to get cell with index -1 for Stack of length 0
-#     """
     """
-    Constructs a stack over baseCell from a projection factor set
+    Stack class
+
+    Init method constructs a stack over baseCell from a projection factor set
     
-    >>> stack = Stack(None, [Poly(x**2-1)])
+    When the projection factor set is a set of univariate polynomials with some roots,
+    the result is a stack with a cell of dimension 0 for each root
+    and a cell of dimension 1 for each interval between roots.
+    >>> stack = Stack(None, [Poly(x**2-1), Poly((x-1)**2-1)])
+    >>> for c in stack.cells:
+    ...     print(c.dimension)
+    1
+    0
+    1
+    0
+    1
+    0
+    1
+    0
+    1
+    >>> for c in stack.cells:
+    ...     print(c.sample)
+    [-1.10000000000000]
+    [-1]
+    [-1/2]
+    [0]
+    [1/2]
+    [1]
+    [3/2]
+    [2]
+    [2.10000000000000]
+
+    When the projection factor set is a set of univariate polynomials with no roots,
+    the result is a single cell containing the whole real line with an arbitrary sample point
+    that is set to be 0:
+    >>> stack = Stack(None, [Poly(x**2+1)])
+    >>> for c in stack.cells:
+    ...     print(c.dimension)
+    1
+    >>> for c in stack.cells:
+    ...     print(c.sample)
+    [0]
     """
     def __init__(self, baseCell, projectionFactorSet):
         self.baseCell = baseCell
@@ -92,7 +113,7 @@ class Stack:
 
         # If no roots -> cell is R^n
         if len(roots) == 0:
-            return [Cell(baseCell.dimension + 1, 0, self)]
+            return [Cell(baseCell.dimension + 1, [0], self)]
 
         cells = [];
         # declaro eps con un valor arbitrario para que compile
