@@ -74,7 +74,6 @@ class Stack:
             if baseCell:
                 q = p.eval(baseCell.getSamplePoint())
             roots.extend(q.all_roots())
-        self.cells = self.constructStackCells(roots)
 
 
     # Private method
