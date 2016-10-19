@@ -1,4 +1,4 @@
-from lifting.py import *
+from lifting import *
 x = symbols('x')
 polin = Poly(x**2-1)
 stack = Stack(None, [polin])
