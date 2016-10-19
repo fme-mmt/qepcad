@@ -19,7 +19,7 @@ class Cell:
         self.sample = sample
         self.stack = stack
         # self.positionInStack = 0
-        self.cad = stack.cad
+#         self.cad = stack.cad
 
         # self.belongsToRegionProjection = 0;
 
@@ -63,10 +63,14 @@ class Stack:
 #         ...
 #     qepcad.StackCellOutOfBoundsError: Tried to get cell with index -1 for Stack of length 0
 #     """
-    """ Constructs a stack over baseCell from a projection factor set """
+    """
+    Constructs a stack over baseCell from a projection factor set
+    
+    >>> stack = Stack(None, [Poly(x**2-1)])
+    """
     def __init__(self, baseCell, projectionFactorSet):
         self.baseCell = baseCell
-        self.cad = baseCell.cad  # how to handle the first stack?
+#         self.cad = baseCell.cad  # how to handle the first stack?
                                 # Somehow we'll have to set this directly. Subclass? Another init?
         self.roots = []
         for p in projectionFactorSet:
@@ -75,37 +79,42 @@ class Stack:
                 q = p.eval(baseCell.getSamplePoint())
             self.roots.extend(q.all_roots())
 
-        self.constructStackCells(self.roots)
+        self.cells = self.constructStackCells(self.roots)
 
 
     # Private method
     def constructStackCells(self, roots):
+        baseCell = Cell(0, [], self)
+        if self.baseCell:
+            baseCell = self.baseCell
+
         cells = [];
         # declaro eps con un valor arbitrario para que compile
         eps = 0.1
         # First cell
-        firstCell = Cell(self.baseCell.dimension + 1,
-                         self.fbaseCell.sample.append(roots[0] - eps), self)
+        firstCell = Cell(baseCell.dimension + 1,
+                         baseCell.sample.append(roots[0] - eps), self)
         cells.append(firstCell)
-
-        for i in range(1, roots.length - 1):
-            cellRoot = Cell(self.baseCell.dimension,
-                            self.baseCell.sample.append(roots[i]), self)
-            cellNext = Cell(self.baseCell.dimension + 1,
-                            self.baseCell.sample.append((roots[i] + roots[i + 1] / 2)), self)
+        for i in range(0, len(roots) - 1):
+            cellRoot = Cell(baseCell.dimension,
+                            baseCell.sample.append(roots[i]), self)
+            cellNext = Cell(baseCell.dimension + 1,
+                            baseCell.sample.append((roots[i] + roots[i + 1] / 2)), self)
             cells.extend([cellRoot, cellNext])
 
-        cellLastRoot = Cell(self.baseCell.dimension,
-                            self.baseCell.sample.append(roots[i]), self)
+        cellLastRoot = Cell(baseCell.dimension,
+                            baseCell.sample.append(roots[-1]), self)
         cells.append(cellLastRoot)
 
-        lastCell = Cell(self.baseCell.dimension + 1,
-                        self.baseCell.sample.append(roots[-1] + eps), self)
+        lastCell = Cell(baseCell.dimension + 1,
+                        baseCell.sample.append(roots[-1] + eps), self)
         cells.append(lastCell)
 
+        return cells
 
-    def getCad(self):
-        return self.cad;
+
+#     def getCad(self):
+#         return self.cad;
 
     def getBaseCell(self):
         return self.baseCell
@@ -117,7 +126,9 @@ class Stack:
         return len(self.cells)
 
     def getDimension(self):
-        return self.baseCell.dimension + 1
+        if self.baseCell:
+            return self.baseCell.dimension + 1
+        return -1
 
 
 class Cad:
@@ -162,13 +173,13 @@ def cadExtension(cad, projectionFactorSet):
 
 # Hay que escribir funcion que construia cad caso base
 def baseCad(projectionFactorSet):
-    """
-    Constructing a base cad for a polinomial gives us a cad of dimension 1
-    (intervals and points)
-    >>> cad = baseCad([Poly(x**2-1)])
-    >>> cad.dimension
-    1
-    """
+#     """
+#     Constructing a base cad for a polinomial gives us a cad of dimension 1
+#     (intervals and points)
+#     >>> cad = baseCad([Poly(x**2-1)])
+#     >>> cad.dimension
+#     1
+#     """
     # Tenemos n polinomios de una variable. A partir de sus r raíces
     # obtenemos las primeras r+1 celdas
     roots = []
