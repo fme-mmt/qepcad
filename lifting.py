@@ -66,14 +66,16 @@ class Stack:
     """ Constructs a stack over baseCell from a projection factor set """
     def __init__(self, baseCell, projectionFactorSet):
         self.baseCell = baseCell
-        self.cad = baseCell.cad  # hot to handle the first stack?
+        self.cad = baseCell.cad  # how to handle the first stack?
                                 # Somehow we'll have to set this directly. Subclass? Another init?
         self.roots = []
         for p in projectionFactorSet:
             q = p
             if baseCell:
                 q = p.eval(baseCell.getSamplePoint())
-            roots.extend(q.all_roots())
+            self.roots.extend(q.all_roots())
+
+        self.constructStackCells(self.roots)
 
 
     # Private method
@@ -100,8 +102,6 @@ class Stack:
         lastCell = Cell(self.baseCell.dimension + 1,
                         self.baseCell.sample.append(roots[-1] + eps), self)
         cells.append(lastCell)
-
-        return cells
 
 
     def getCad(self):
