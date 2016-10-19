@@ -151,7 +151,8 @@ class Stack:
 
         # If no roots -> cell is R^n
         if len(roots) == 0:
-            return [Cell(baseCell.dimension + 1, [0], self)]
+            dim = baseCell.dimension + 1
+            return [Cell(dim, [0] * dim, self)]
 
         cells = [];
         # declaro eps con un valor arbitrario para que compile
