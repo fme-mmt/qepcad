@@ -79,6 +79,7 @@ class Stack:
                 q = p.eval(baseCell.getSamplePoint())
             self.roots.extend(q.all_roots())
 
+        self.roots.sort()
         self.cells = self.constructStackCells(self.roots)
 
 
