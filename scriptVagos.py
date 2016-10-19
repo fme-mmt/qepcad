@@ -5,4 +5,8 @@ stack = Stack(None, [polin])
 
 for c in stack.cells:
     print(c.dimension)
+
+print("\n")
+
+for c in stack.cells:
     print(c.sample)
