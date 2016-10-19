@@ -93,21 +93,21 @@ class Stack:
         eps = 0.1
         # First cell
         firstCell = Cell(baseCell.dimension + 1,
-                         baseCell.sample.append(roots[0] - eps), self)
+                         baseCell.sample + [roots[0] - eps], self)
         cells.append(firstCell)
         for i in range(0, len(roots) - 1):
             cellRoot = Cell(baseCell.dimension,
-                            baseCell.sample.append(roots[i]), self)
+                            baseCell.sample + [roots[i]], self)
             cellNext = Cell(baseCell.dimension + 1,
-                            baseCell.sample.append((roots[i] + roots[i + 1] / 2)), self)
+                            baseCell.sample + [(roots[i] + roots[i + 1]) / 2], self)
             cells.extend([cellRoot, cellNext])
 
         cellLastRoot = Cell(baseCell.dimension,
-                            baseCell.sample.append(roots[-1]), self)
+                            baseCell.sample + [roots[-1]], self)
         cells.append(cellLastRoot)
 
         lastCell = Cell(baseCell.dimension + 1,
-                        baseCell.sample.append(roots[-1] + eps), self)
+                        baseCell.sample + [roots[-1] + eps], self)
         cells.append(lastCell)
 
         return cells
