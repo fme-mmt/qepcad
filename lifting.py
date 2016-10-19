@@ -90,12 +90,13 @@ class Stack:
         if self.baseCell:
             baseCell = self.baseCell
 
+        # If no roots -> cell is R^n
+        if len(roots) == 0:
+            return [Cell(baseCell.dimension + 1, 0, self)]
+
         cells = [];
         # declaro eps con un valor arbitrario para que compile
         eps = 0.1
-
-        # If no roots -> cell is R
-
 
         # First cell
         firstCell = Cell(baseCell.dimension + 1,
