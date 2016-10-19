@@ -50,7 +50,7 @@ class Stack:
     Stack class
 
     Init method constructs a stack over baseCell from a projection factor set
-    
+
     When the projection factor set is a set of univariate polynomials with some roots,
     the result is a stack with a cell of dimension 0 for each root
     and a cell of dimension 1 for each interval between roots.
@@ -88,6 +88,44 @@ class Stack:
     >>> for c in stack.cells:
     ...     print(c.sample)
     [0]
+
+    When the projection factor set is a set of multivariate polynomials with roots,
+    the result is similar to the univariate case, but substitution of the baseCell
+    sample point is performed.
+    >>> stack = Stack(Cell(2, [0, 0], None), [Poly(x**2+y**2+z**2-9), Poly(x**2+y**2+(z-1)**2-9)])
+    >>> for c in stack.cells:
+    ...     print(c.dimension)
+    3
+    2
+    3
+    2
+    3
+    2
+    3
+    2
+    3
+    >>> for c in stack.cells:
+    ...     print(c.sample)
+    [0, 0, -3.10000000000000]
+    [0, 0, -3]
+    [0, 0, -5/2]
+    [0, 0, -2]
+    [0, 0, 1/2]
+    [0, 0, 3]
+    [0, 0, 7/2]
+    [0, 0, 4]
+    [0, 0, 4.10000000000000]
+
+    When the projection factor set is a set of multivariate polynomials with no roots,
+    the result is similar to the univariate case, but substitution of the baseCell
+    sample point is performed.
+    >>> stack = Stack(Cell(2, [0, 0], None), [Poly(x**2+y**2+z**2+9)])
+    >>> for c in stack.cells:
+    ...     print(c.dimension)
+    3
+    >>> for c in stack.cells:
+    ...     print(c.sample)
+    [0, 0, 0]
     """
     def __init__(self, baseCell, projectionFactorSet):
         self.baseCell = baseCell
