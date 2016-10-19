@@ -77,7 +77,8 @@ class Stack:
             q = p
             if baseCell:
                 q = p.eval(baseCell.getSamplePoint())
-            self.roots.extend(q.all_roots())
+            newRoots = [r[0] for r in q.real_roots(False)]
+            self.roots.extend(newRoots)
 
         self.roots.sort()
         self.cells = self.constructStackCells(self.roots)
@@ -92,6 +93,10 @@ class Stack:
         cells = [];
         # declaro eps con un valor arbitrario para que compile
         eps = 0.1
+
+        # If no roots -> cell is R
+
+
         # First cell
         firstCell = Cell(baseCell.dimension + 1,
                          baseCell.sample + [roots[0] - eps], self)
