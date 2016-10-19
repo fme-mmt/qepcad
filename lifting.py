@@ -70,7 +70,9 @@ class Stack:
                                 # Somehow we'll have to set this directly. Subclass? Another init?
         self.roots = []
         for p in projectionFactorSet:
-            q = p.eval(baseCell.getSamplePoint())
+            q = p
+            if baseCell:
+                q = p.eval(baseCell.getSamplePoint())
             roots.extend(q.all_roots())
         self.cells = self.constructStackCells(roots)
 
