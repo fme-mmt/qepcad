@@ -253,7 +253,8 @@ def baseCad(projectionFactorSet):
     baseCad = Cad()
     for p in projectionFactorSet:
         # añado las raíces a el conjunto de raíces.
-        roots.append(p.all_roots())
+        for r in p.real_roots():
+            roots.append(r)
 
     # ordeno las raíces para crear mi conjunto de indices.
     roots.sort()
@@ -261,25 +262,30 @@ def baseCad(projectionFactorSet):
     stack = (None, projectionFactorSet)  # this is a hack, which stack shall we put here?
     eps = 0.1
     j = 0
+
     for i in range(0, 2 * len(roots) + 1):
-         # Añadimos los puntos muestra(que tienen solo una coordenada)
+        # Añadimos los puntos muestra(que tienen solo una coordenada)
         if i == 0:
-            cell = Cell(1, roots[0] - eps, stack)
+            cell = Cell(1, [roots[0]-eps], stack)
+            baseCad.addCell(cell)
+            cell = Cell(1, [roots[0]], stack)
+            baseCad.addCell(cell)
             j += 1
 
-        if i == 2 * len(roots) + 1:
-            cell = Cell(1, roots[-1] + eps, stack)
-            continue
+        elif i == 2 * len(roots):
+            cell = Cell(1, [roots[-1] + eps], stack)
+            baseCad.addCell(cell)
 
         # si estamos en una celda par añade el punto medio, si no añade la raíz como punto muestra.
-        if i % 2 == 0:
-            cell = Cell(1, (roots[j] + roots[j + 1]) / 2)
-            j += 1
+        elif i % 2 == 0:
+            if (j + 1) < len(roots):
+                cell = Cell(1, [(roots[j] + roots[j + 1]) / 2], stack)
+                baseCad.addCell(cell)
+                j += 1
         else:
-            cell = Cell(0, roots[j])
-
-        baseCad.addCell(cell)
-
+            if j < len(roots) and i < 2 * len(roots)-1:
+                cell = Cell(0, roots[j], stack)
+                baseCad.addCell(cell)
     return baseCad
 
 
