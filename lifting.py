@@ -127,15 +127,16 @@ class Stack:
     ...     print(c.sample)
     [0, 0, 0]
     """
-    def __init__(self, baseCell, projectionFactorSet):
+    def __init__(self, baseCell, projectionFactor):
         self.baseCell = baseCell
 #         self.cad = baseCell.cad  # how to handle the first stack?
                                 # Somehow we'll have to set this directly. Subclass? Another init?
         self.roots = []
-        for p in projectionFactorSet:
+        for p in projectionFactor:
             q = p
             if baseCell:
                 q = p.eval(baseCell.getSamplePoint())
+            print(q)
             newRoots = [r[0] for r in q.real_roots(False)]
             self.roots.extend(newRoots)
 
@@ -201,7 +202,20 @@ class Stack:
 class Cad:
     def __init__(self):
         self.dimension = 0
-        self.cells = []
+        self.stacks = []
+
+    def construct(self, projectionFactorSet):
+        projectionFactor = projectionFactorSet[0]
+        stack = Stack(Cell(0, [], None), projectionFactor)
+        self.stacks.append([stack])
+        for i in range(1, len(projectionFactorSet)):
+            self.stacks.append([])
+            projectionFactor = projectionFactorSet[i]
+            for previosPhaseStack in self.stacks[i - 1]:
+                for cell in previosPhaseStack.cells:
+                    stack = Stack(cell, projectionFactor)
+                    self.stacks[i].append(stack)
+
 
     def containsPoint(self, point: Point) -> bool:
         pass;
@@ -266,7 +280,7 @@ def baseCad(projectionFactorSet):
     for i in range(0, 2 * len(roots) + 1):
         # Añadimos los puntos muestra(que tienen solo una coordenada)
         if i == 0:
-            cell = Cell(1, [roots[0]-eps], stack)
+            cell = Cell(1, [roots[0] - eps], stack)
             baseCad.addCell(cell)
             cell = Cell(1, [roots[0]], stack)
             baseCad.addCell(cell)
@@ -283,7 +297,7 @@ def baseCad(projectionFactorSet):
                 baseCad.addCell(cell)
                 j += 1
         else:
-            if j < len(roots) and i < 2 * len(roots)-1:
+            if j < len(roots) and i < 2 * len(roots) - 1:
                 cell = Cell(0, roots[j], stack)
                 baseCad.addCell(cell)
     return baseCad
