@@ -1,5 +1,4 @@
 from sympy import *
-from sympy.geometry import *
 
 class Cell:
 #     """
@@ -39,7 +38,7 @@ class Cell:
 #             # se we need a pointer to the Cad the cell belongs to
 
     # Should we add an exception if point.dimension != self.dimension?
-    def containsPoint(self, point: Point) -> bool:
+    def containsPoint(self, point) -> bool:
         # point should be of class Point from sympy geometry package
         # Do some magic here
         return False;
@@ -217,7 +216,7 @@ class Cad:
                     self.stacks[i].append(stack)
 
 
-    def containsPoint(self, point: Point) -> bool:
+    def containsPoint(self, point) -> bool:
         pass;
 
     def cellExists(self, index: list):
