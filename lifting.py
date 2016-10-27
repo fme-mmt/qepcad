@@ -134,11 +134,10 @@ class Stack:
         for p in projectionFactor:
             q = p
             if baseCell:
-                q = p.eval(baseCell.getSamplePoint())
-            print(q)
-            newRoots = [r[0] for r in q.real_roots(False)]
-            self.roots.extend(newRoots)
-
+                q = p.subs(baseCell.getSamplePoint())
+            newRoots = solve(q)
+            self.roots += newRoots
+            #TODO: purgar las raíces no reales
         self.roots.sort()
         self.cells = self.constructStackCells(self.roots)
 
@@ -266,7 +265,7 @@ def baseCad(projectionFactorSet):
     baseCad = Cad()
     for p in projectionFactorSet:
         # añado las raíces a el conjunto de raíces.
-        for r in p.real_roots():
+        for r in solve(p):
             roots.append(r)
 
     # ordeno las raíces para crear mi conjunto de indices.
