@@ -238,15 +238,10 @@ def cadExtension(cad, projectionFactorSet):
     #     para celda del stack
     #         me construyo el nuevo stack sobre esta celda
     #         y añado el nuevo stack en este mismo cad
-
-    # igual esto sería al reves
-    # para cada celda del cad
-    for cell in cad.cells:
-        # construyo el nuevo stack sobre esta celda y añado el nuevo stack en este mismo cad
-        stack = Stack(cell, projectionFactorSet)
-        for stackCell in stack.cells:
-            cad.addCell(stackCell)
-
+    for stack in cad.stacks:
+        for cell in stack:
+            newStack = Stack(cell, projectionFactorSet)
+            cad.stacks.append(newStack)
     return cad
 
 
