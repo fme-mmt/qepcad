@@ -18,7 +18,7 @@ class Cell:
         self.sample = sample
         self.stack = stack
         # self.positionInStack = 0
-#         self.cad = stack.cad
+        # self.cad = stack.cad
 
         # self.belongsToRegionProjection = 0;
 
@@ -41,7 +41,7 @@ class Cell:
     def containsPoint(self, point) -> bool:
         # point should be of class Point from sympy geometry package
         # Do some magic here
-        return False;
+        return False
 
 
 class Stack:
@@ -153,7 +153,7 @@ class Stack:
             dim = baseCell.dimension + 1
             return [Cell(dim, [0] * dim, self)]
 
-        cells = [];
+        cells = []
         # declaro eps con un valor arbitrario para que compile
         eps = 0.1
 
