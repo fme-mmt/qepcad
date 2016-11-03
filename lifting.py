@@ -139,6 +139,7 @@ class Stack:
                 newRoots = solve(q)
                 self.roots += newRoots
                 #TODO: purgar las raíces no reales
+                #TODO: decirle que tome las racíces para una variable concreta(?)
         self.roots.sort()
         self.cells = self.constructStackCells(self.roots)
 
