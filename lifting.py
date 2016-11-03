@@ -131,13 +131,16 @@ class Stack:
 #         self.cad = baseCell.cad  # how to handle the first stack?
                                 # Somehow we'll have to set this directly. Subclass? Another init?
         self.roots = []
+        #p is a set of polynomials of the projectionFactor
         for p in projectionFactor:
-            q = p
-            if baseCell:
-                q = p.subs(baseCell.getSamplePoint())
-            newRoots = solve(q)
-            self.roots += newRoots
-            #TODO: purgar las raíces no reales
+            for q in p:
+                if baseCell:
+                    q = q.subs(baseCell.getSamplePoint())
+                newRoots = solve(q)
+                self.roots += newRoots
+                #TODO: purgar las raíces no reales
+        for root in self.roots:
+            print(root)
         self.roots.sort()
         self.cells = self.constructStackCells(self.roots)
 
