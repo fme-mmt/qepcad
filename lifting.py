@@ -135,7 +135,8 @@ class Stack:
         for p in projectionFactor:
             q = p
             if baseCell:
-                q = q.subs(baseCell.getSamplePoint())
+                q = p.eval(baseCell.getSamplePoint())
+                print(q)
             newRoots = solve(q)
             for purgedRoots in newRoots:
                 if im(purgedRoots.evalf()) == 0:
