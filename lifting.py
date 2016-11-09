@@ -137,7 +137,9 @@ class Stack:
             if baseCell:
                 q = q.subs(baseCell.getSamplePoint())
             newRoots = solve(q)
-            self.roots += newRoots
+            for purgedRoots in newRoots:
+                if im(purgedRoots.evalf()) == 0:
+                    self.roots.append(purgedRoots)
 
             # TODO: purgar las raíces no reales
             # TODO: decirle que tome las racíces para una variable concreta(?)
