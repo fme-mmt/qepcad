@@ -133,13 +133,15 @@ class Stack:
         self.roots = []
         #p is a set of polynomials of the projectionFactor
         for p in projectionFactor:
-            for q in p:
-                if baseCell:
-                    q = q.subs(baseCell.getSamplePoint())
-                newRoots = solve(q)
-                self.roots += newRoots
-                #TODO: purgar las raíces no reales
-                #TODO: decirle que tome las racíces para una variable concreta(?)
+            q = p
+            if baseCell:
+                q = q.subs(baseCell.getSamplePoint())
+            newRoots = solve(q)
+            self.roots += newRoots
+
+            # TODO: purgar las raíces no reales
+            # TODO: decirle que tome las racíces para una variable concreta(?)
+
         self.roots.sort()
         self.cells = self.constructStackCells(self.roots)
 
@@ -198,23 +200,24 @@ class Stack:
             return self.baseCell.dimension + 1
         return -1
 
-
+""" Cad.construct(projectionFactorSet) devuelve una lista de listas de stacks tal que cada elemento
+i es una lista de los stacks de la iteracion i"""
 class Cad:
     def __init__(self):
         self.dimension = 0
-        self.stacks = []
+        self.stackList = []
 
     def construct(self, projectionFactorSet):
         projectionFactor = projectionFactorSet[0]
         stack = Stack(Cell(0, [], None), projectionFactor)
-        self.stacks.append([stack])
+        self.stackList.append([stack])
         for i in range(1, len(projectionFactorSet)):
-            self.stacks.append([])
+            self.stackList.append([])
             projectionFactor = projectionFactorSet[i]
-            for previosPhaseStack in self.stacks[i - 1]:
+            for previosPhaseStack in self.stackList[i - 1]:
                 for cell in previosPhaseStack.cells:
                     stack = Stack(cell, projectionFactor)
-                    self.stacks[i].append(stack)
+                    self.stackList[i].append(stack)
 
 
     def containsPoint(self, point) -> bool:
