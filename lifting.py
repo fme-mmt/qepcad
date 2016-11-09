@@ -136,7 +136,7 @@ class Stack:
             q = p
             if baseCell:
                 q = p.eval(baseCell.getSamplePoint())
-                print(q)
+                # print(q)
             newRoots = solve(q)
             for purgedRoots in newRoots:
                 if im(purgedRoots.evalf()) == 0:
@@ -224,14 +224,14 @@ class Cad:
 
 
     def containsPoint(self, point) -> bool:
-        pass;
+        pass
 
     def cellExists(self, index: list):
-        pass;
+        pass
 
     """ si index tiene n coordenadas, nos devuelve la celda n-dimensional correspondiente """
     def getCell(self, index: list):
-        pass;
+        pass
 
     # metodo para añadir celdas (se usa en cada iteración para añadir las nuevas celdas)
 
