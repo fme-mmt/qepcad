@@ -200,8 +200,8 @@ class Stack:
             return self.baseCell.dimension + 1
         return -1
 
-""" Cad.construct(projectionFactorSet) devuelve una lista de listas de stacks tal que cada elemento
-i es una lista de los stacks de la iteracion i"""
+""" Cad.construct(projectionFactorSet) returns a list stackList of lists stacks were the i stacks element
+  is all the stacks of the i phase """
 class Cad:
     def __init__(self):
         self.dimension = 0
