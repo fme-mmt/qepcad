@@ -1,6 +1,14 @@
 from lifting import *
 x, y, z = symbols('x y z')
 projectionFactorSet = ([
+                        {Poly(x + 1), Poly(x - 1), Poly(2 * x ** 2 - 1)},
+                        {Poly(x - y), Poly(x ** 2 + y ** 2 - 1)},
+])
+cad = Cad()
+cad.construct(projectionFactorSet)
+
+
+projectionFactorSet = ([
                         {Poly(x + 1), Poly(x - 1), Poly(x),
                          Poly(32 * x ** 6 - 80 * x ** 4 + 85 * x ** 2 - 32),
                          Poly(2 * x ** 2 - 1)},
