@@ -134,13 +134,25 @@ class Stack:
         for p in projectionFactor:
             q = p
             if baseCell:
+                print('About to eval sample point of base cell')
                 q = p.eval(baseCell.getSamplePoint())
+                print('Done with eval sample point of base cell')
+            print('About to find roots with solve')
             print(q)
-            newRoots = [r[0] for r in q.real_roots(False)]
-            self.roots.extend(newRoots)
+            newRoots = solve(q)
+            print('Done with find roots with solve')
+            print ('We have ' + str(len(newRoots)) + ' roots')
+            for cRoot in newRoots:
+                print('About to print root')
+                print(cRoot)
+                print('Done to print root')
+                if im(cRoot.evalf()) == 0:
+                    self.roots.append(cRoot)
 
         self.roots.sort()
+        print('About to construct stack cells')
         self.cells = self.constructStackCells(self.roots)
+        print('Done with construct stack cells')
 
 
     # Private method
@@ -208,10 +220,13 @@ class Cad:
         stack = Stack(Cell(0, [], None), projectionFactor)
         self.stacks.append([stack])
         for i in range(1, len(projectionFactorSet)):
+            print('Projection factor ' + str(i))
             self.stacks.append([])
             projectionFactor = projectionFactorSet[i]
             for previosPhaseStack in self.stacks[i - 1]:
+                print('Previous stack ')
                 for cell in previosPhaseStack.cells:
+                    print('    Cell of previous stack with sample: ' + str(cell.sample))
                     stack = Stack(cell, projectionFactor)
                     self.stacks[i].append(stack)
 

@@ -7,6 +7,12 @@ projectionFactorSet = ([
 cad = Cad()
 cad.construct(projectionFactorSet)
 
+# TODO 1: comprovar que aquest exemple dona un cad correcte
+
+
+print('-------------------')
+
+# TODO 2: cambiar solve per l'algoritme que toqui del llibre (explicar que pasa la mailing list)
 
 projectionFactorSet = ([
                         {Poly(x + 1), Poly(x - 1), Poly(x),
