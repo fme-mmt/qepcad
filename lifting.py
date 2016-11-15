@@ -141,6 +141,7 @@ class Stack:
             for purgedRoots in newRoots:
                 if im(purgedRoots.evalf()) == 0:
                     self.roots.append(purgedRoots)
+                    #print('rooot : ', purgedRoots)
 
             # TODO: purgar las raíces no reales
             # TODO: decirle que tome las racíces para una variable concreta(?)
@@ -163,7 +164,16 @@ class Stack:
         cells = []
         # declaro eps con un valor arbitrario para que compile
         eps = 0.1
+        # Teniamos raíces repetidas, lo que probocaba la creacion de celdas de mas
+        # El siguiente parche cutre lo soluciona, pero no es lo mas eficiente.
+        # TODO: Arreglar esta chapuza
+        original_roots = roots
+        roots = []
+        for i in original_roots:
+            if i not in roots:
+                roots.append(i)
 
+        # print('rooooooots: ', roots, ' ', type(roots))
         # First cell
         firstCell = Cell(baseCell.dimension + 1,
                          baseCell.sample + [roots[0] - eps], self)
