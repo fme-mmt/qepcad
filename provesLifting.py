@@ -16,7 +16,12 @@ def printSamples(cad):
             j += 1
         i += 1
 
+"""Ejemplo de las Slides 2F, pag 4: Represent x - y < 0 ^ x^2+y^2 - 1 <= 0
 
+(x = -1∧y = 0)∨(-1<x<-1/sqrt(2)∧-sqrt(1-x^2)<=y<=sqrt(1-x^2))∨(x = -1/sqrt(2)∧-sqrt(1-x^2)<y<=sqrt(1-x^2))
+∨(-1/sqrt(2)<x<1/sqrt(2)∧x<y<=sqrt(1-x^2))
+
+"""
 projectionFactorSet = ([
                         {Poly(x + 1), Poly(x - 1), Poly(2 * x ** 2 - 1)},
                         {Poly(x - y), Poly(x ** 2 + y ** 2 - 1)},
