@@ -50,7 +50,7 @@ Poly(4*y**4 - (sqrt(6)*sqrt(-2**(1/3)*(194 + 57*sqrt(114))**(2/3) + 55*2**(2/3) 
    57*sqrt(114))**(1/6)*sqrt(-2**(1/3)*(194 + 57*sqrt(114))**(2/3) + 55*2**(2/3) + 20*(194 + 57*sqrt(114))**(1/3)) + 2517*2**(2/3)*(194 +
    57*sqrt(114))**(1/3) + 858*(194 + 57*sqrt(114))**(2/3))/(1152*(194 + 57*sqrt(114))**(2/3)), y, domain='EX')
 """
-"""projectionFactorSet = ([
+projectionFactorSet2 = ([
                         {Poly(x + 1), Poly(x - 1), Poly(x),
                          Poly(32 * x ** 6 - 80 * x ** 4 + 85 * x ** 2 - 32),
                          Poly(2 * x ** 2 - 1)},
@@ -60,7 +60,19 @@ Poly(4*y**4 - (sqrt(6)*sqrt(-2**(1/3)*(194 + 57*sqrt(114))**(2/3) + 55*2**(2/3) 
 
                         {Poly(x ** 2 + y ** 2 + z ** 2 - 1), Poly(2 * (x + y) * z - 1), Poly(y)}
                         ])
-cad = Cad()
-cad.construct(projectionFactorSet)
+cad2 = Cad()
+# cad2.construct(projectionFactorSet2)
+# printSamples(cad2)
+print('-----------')
 
-print('-----------')"""
+"""
+Test 3: Descomposicion de la esfera:
+"""
+
+projectionFactorSet3 = ([{Poly(x + 2), Poly(x - 2)}, {Poly(x**2 + y**2 - 4)}, {Poly(x**2 + y**2 + z**2-4)}])
+cad3 = Cad()
+cad3.construct(projectionFactorSet3)
+printSamples(cad3)
+
+
+print('----------')
