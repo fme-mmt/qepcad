@@ -131,7 +131,7 @@ class Stack:
 #         self.cad = baseCell.cad  # how to handle the first stack?
                                 # Somehow we'll have to set this directly. Subclass? Another init?
         self.roots = []
-        #p is a set of polynomials of the projectionFactor
+        # p is a set of polynomials of the projectionFactor
         for p in projectionFactor:
             q = p
             if baseCell:
@@ -156,10 +156,10 @@ class Stack:
         if self.baseCell:
             baseCell = self.baseCell
 
-        # If no roots -> cell is R^n
-        if len(roots) == 0:
+        # If no roots -> cell is R^n -> We take an arbitrary number (0)
+        if roots == []:
             dim = baseCell.dimension + 1
-            return [Cell(dim, [0] * dim, self)]
+            return [Cell(dim, baseCell.sample + [0], self)]
 
         cells = []
         # declaro eps con un valor arbitrario para que compile
