@@ -1,4 +1,5 @@
 from sympy import *
+x, y, z = symbols('x y z')
 
 class Cell:
 #     """
@@ -134,17 +135,18 @@ class Stack:
         # p is a set of polynomials of the projectionFactor
         for p in projectionFactor:
             q = p
+
             if baseCell:
-                q = p.eval(baseCell.getSamplePoint())
-                # print(q)
+                # TODO: generalizar esto, solo funciona "cuando las raíces están ordenadas"
+                # Hay casos donde no va a funcionar (punto [a,b] poly y = cosa) evaluará y = a
+                if len(baseCell.getSamplePoint()) <= len(p.atoms(Symbol)):
+                    q = p.eval(baseCell.getSamplePoint())
+
             newRoots = solve(q)
             for purgedRoots in newRoots:
                 if im(purgedRoots.evalf()) == 0:
                     self.roots.append(purgedRoots)
                     #print('rooot : ', purgedRoots)
-
-            # TODO: purgar las raíces no reales
-            # TODO: decirle que tome las racíces para una variable concreta(?)
 
         self.roots.sort()
         self.cells = self.constructStackCells(self.roots)

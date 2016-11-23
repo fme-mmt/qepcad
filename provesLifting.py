@@ -29,7 +29,7 @@ projectionFactorSet = ([
 cad = Cad()
 cad.construct(projectionFactorSet)
 printSamples(cad)
-# TODO 1: comprovar que aquest exemple dona un cad correcte
+# FUNCIONA
 
 
 print('-------------------')
@@ -73,6 +73,21 @@ projectionFactorSet3 = ([{Poly(x + 2), Poly(x - 2)}, {Poly(x**2 + y**2 - 4)}, {P
 cad3 = Cad()
 cad3.construct(projectionFactorSet3)
 printSamples(cad3)
+# FUNCIONA
 
+print('----------')
+
+"""
+Test 4: Descomposicion del problema de clase:
+x^2+y^2 <= z <= 2
+x^2+y^2 , 2 - z
+"""
+print('Ejemplo 4')
+projectionFactorSet4 = ([{Poly(x + sqrt(2)), Poly(x - sqrt(2))}, {Poly(x**2 + y**2 - 2)},
+                         {Poly(x**2 + y**2 - z), Poly(2 - z)}])
+cad4 = Cad()
+cad4.construct(projectionFactorSet4)
+printSamples(cad4)
+# FUNCIONA ???
 
 print('----------')
