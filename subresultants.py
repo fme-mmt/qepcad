@@ -12,26 +12,28 @@ def PSC(F, G, x):
     variable x.
     
     The n-th psc, where n is the minimum of the degrees of F and G with
-    respect to x, is defined as 1. Extended psc beyond the n-th are not
-    considered.
+    respect to x, is defined as 1 when F and G have the same degree.
+    Extended psc beyond the n-th are not considered.
 
     >>> PSC(0, 0, var('y'))
     set()
     >>> PSC(poly('2*y'), poly('3*x'), var('y'))
-    {1}
+    {3*x}
     >>> PSC(poly('2*y'), poly('3*x + 5*y**2'), var('y'))
-    {12*x, 1}
+    {12*x, 2}
     >>> PSC(poly('y**3'), poly('y**3 + y'), var('y'))
     {1}
     """
+    d1 = degree(F, x)
+    d2 = degree(G, x)
+    if d1 < d2:
+        [F, G] = [G, F]
     s = set()
-    n = min( degree(F,x), degree(G,x) )
-    if n < 0:
-        return s
     subs = subresultants(F, G, x)[2:]
     for p in reversed(subs):
         s.add( LC(p, x) )
-    s.add(1); # SIAM defines it as 1 but WolframAlpha sometimes says otherwise
+    if G != 0:
+        s.add( 1 if d1==d2 else LC(G, x) )
     return s
 
 
