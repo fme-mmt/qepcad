@@ -139,7 +139,7 @@ class Stack:
             q = p
 
             if baseCell:
-                # Ahora funciona :D 
+                # Ahora funciona :D
                 q = eval_better(p, baseCell.getSamplePoint())
 
             newRoots = solve(q)
