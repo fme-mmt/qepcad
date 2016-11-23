@@ -1,5 +1,7 @@
 from lifting import *
+
 x, y, z = symbols('x y z')
+
 
 def printSamples(cad):
     print('Samples')
@@ -28,7 +30,7 @@ projectionFactorSet = ([
 ])
 cad = Cad()
 cad.construct(projectionFactorSet)
-printSamples(cad)
+#printSamples(cad)
 # FUNCIONA
 
 
@@ -72,7 +74,7 @@ Test 3: Descomposicion de la esfera:
 projectionFactorSet3 = ([{Poly(x + 2), Poly(x - 2)}, {Poly(x**2 + y**2 - 4)}, {Poly(x**2 + y**2 + z**2-4)}])
 cad3 = Cad()
 cad3.construct(projectionFactorSet3)
-printSamples(cad3)
+#printSamples(cad3)
 # FUNCIONA
 
 print('----------')
@@ -85,9 +87,35 @@ x^2+y^2 , 2 - z
 print('Ejemplo 4')
 projectionFactorSet4 = ([{Poly(x + sqrt(2)), Poly(x - sqrt(2))}, {Poly(x**2 + y**2 - 2)},
                          {Poly(x**2 + y**2 - z), Poly(2 - z)}])
+
+
 cad4 = Cad()
 cad4.construct(projectionFactorSet4)
 printSamples(cad4)
 # FUNCIONA ???
+
+"""cosas que he usado para testear :
+"""
+
+allSymbols = []
+for setp in projectionFactorSet4:
+    for p in setp:
+        for symb in p.atoms(Symbol):
+            if symb not in allSymbols:
+                allSymbols.append(symb)
+
+
+def eval_better(p, sample):
+    n = len(sample)
+    psyms = p.atoms(Symbol)
+    m = len(psyms)
+    if m == 1:
+        return p
+
+    for i in range(0, n):
+        if allSymbols[i] in psyms:
+            p = p.eval(allSymbols[i], sample[i])
+    return p
+
 
 print('----------')

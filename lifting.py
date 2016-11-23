@@ -1,5 +1,7 @@
 from sympy import *
-x, y, z = symbols('x y z')
+
+allSymbols = []
+
 
 class Cell:
 #     """
@@ -137,10 +139,8 @@ class Stack:
             q = p
 
             if baseCell:
-                # TODO: generalizar esto, solo funciona "cuando las raíces están ordenadas"
-                # Hay casos donde no va a funcionar (punto [a,b] poly y = cosa) evaluará y = a
-                if len(baseCell.getSamplePoint()) <= len(p.atoms(Symbol)):
-                    q = p.eval(baseCell.getSamplePoint())
+                # Ahora funciona :D 
+                q = eval_better(p, baseCell.getSamplePoint())
 
             newRoots = solve(q)
             for purgedRoots in newRoots:
@@ -223,6 +223,12 @@ class Cad:
         self.stackList = []
 
     def construct(self, projectionFactorSet):
+        for setp in projectionFactorSet:
+            for p in setp:
+                for symb in p.atoms(Symbol):
+                    if symb not in allSymbols:
+                        allSymbols.append(symb)
+
         projectionFactor = projectionFactorSet[0]
         stack = Stack(Cell(0, [], None), projectionFactor)
         self.stackList.append([stack])
@@ -283,6 +289,7 @@ def baseCad(projectionFactorSet):
         for r in solve(p):
             roots.append(r)
 
+
     # ordeno las raíces para crear mi conjunto de indices.
     roots.sort()
 
@@ -316,6 +323,17 @@ def baseCad(projectionFactorSet):
     return baseCad
 
 
+def eval_better(p, sample):
+    n = len(sample)
+    psyms = p.atoms(Symbol)
+    m = len(psyms)
+    if m == 1:
+        return p
+
+    for i in range(0, n):
+        if allSymbols[i] in psyms:
+            p = p.eval(allSymbols[i], sample[i])
+    return p
 
 
 
