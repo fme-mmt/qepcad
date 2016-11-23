@@ -1,3 +1,11 @@
+"""
+Test 4: Descomposicion del problema de clase:
+x^2+y^2 <= z <= 2
+x^2+y^2 , 2 - z
+"""
+projectionFactorSet4 = ([{Poly(x + sqrt(2)), Poly(x - sqrt(2))}, {Poly(x**2 + y**2 - 2)},
+                         {Poly(x**2 + y**2 - z), Poly(2 - z)}])
+
 Ejemplo 4
 Samples
 stackList: 0
