@@ -1,0 +1,144 @@
+Descomposición de la esfera en R3: x^2 + y^2 + z^2 -4:
+
+
+Projection Factor set:
+ ([{Poly(x + 2), Poly(x - 2)}, {Poly(x**2 + y**2 - 4)}, {Poly(x**2 + y**2 + z**2-4)}])
+
+
+
+
+
+Samples
+stackList: 0
+stack: 0
+cells:
+[-2.10000000000000]
+[-2]
+[0]
+[2]
+[2.10000000000000]
+stackList: 1
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+PETA:
+Cuando no da solución para el polinomio devuelve la "celda vacía"
+Tenemos el polinomio (-2.1)^2 + y^2-4 = 0
+
+Debería dar [-2.1,numeroArbitrario]
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+stack: 0
+cells:
+[0, 0]
+
+stack: 1
+cells:
+[-2, -0.100000000000000]
+[-2, 0]
+[-2, 0.100000000000000]
+stack: 2
+cells:
+[0, -2.10000000000000]
+[0, -2]
+[0, 0]
+[0, 2]
+[0, 2.10000000000000]
+stack: 3
+cells:
+[2, -0.100000000000000]
+[2, 0]
+[2, 0.100000000000000]
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+PETA:
+Cuando no da solución para el polinomio devuelve la "celda vacía"
+Tenemos el polinomio (-2.1)^2 + y^2-4 = 0
+
+Debería dar [2.1,numeroArbitrario]
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+stack: 4
+cells:
+[0, 0]
+
+
+stackList: 2
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+PETA:
+Está levantando sobre una celda vacía trol
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+stack: 0
+cells:
+[0, 0, -2.10000000000000]
+[0, 0, -2]
+[0, 0, 0]
+[0, 0, 2]
+[0, 0, 2.10000000000000]
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+PETA:
+Cuando no da solución para el polinomio devuelve la "celda vacía"
+Tenemos el polinomio (-2.1)^2 + y^2-4 = 0
+
+Debería dar [-2.1,numeroArbitrario]
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+stack: 1
+cells:
+[0, 0]
+
+
+stack: 2
+cells:
+[-2, 0, -0.100000000000000]
+[-2, 0, 0]
+[-2, 0, 0.100000000000000]
+stack: 3
+cells:
+[0, 0]
+stack: 4
+cells:
+[0, 0, 0]
+stack: 5
+cells:
+[0, -2, -0.100000000000000]
+[0, -2, 0]
+[0, -2, 0.100000000000000]
+stack: 6
+cells:
+[0, 0, -2.10000000000000]
+[0, 0, -2]
+[0, 0, 0]
+[0, 0, 2]
+[0, 0, 2.10000000000000]
+stack: 7
+cells:
+[0, 2, -0.100000000000000]
+[0, 2, 0]
+[0, 2, 0.100000000000000]
+stack: 8
+cells:
+[0, 0, 0]
+stack: 9
+cells:
+[0, 0]
+stack: 10
+cells:
+[2, 0, -0.100000000000000]
+[2, 0, 0]
+[2, 0, 0.100000000000000]
+stack: 11
+cells:
+[0, 0]
+stack: 12
+cells:
+[0, 0, -2.10000000000000]
+[0, 0, -2]
+[0, 0, 0]
+[0, 0, 2]
+[0, 0, 2.10000000000000]
+----------
