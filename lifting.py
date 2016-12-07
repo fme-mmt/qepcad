@@ -4,6 +4,14 @@ allSymbols = []
 
 
 class Cell:
+    """
+    CAD Cell: the class that we use to save the Cell related data.
+
+    Attributes:
+        dimension: the dimension of the cell
+        sample: the sample point of the cell
+        stack: the stack where that cell belongs.
+    """
 #     """
 #     CAD Cell
 #
@@ -16,24 +24,19 @@ class Cell:
 #     """
 
     def __init__(self, dimension, sample, stack):
-    # Public instance variables
+        # Public instance variables
         self.dimension = dimension
         self.sample = sample
         self.stack = stack
         # self.positionInStack = 0
-        # self.cad = stack.cad
-
         # self.belongsToRegionProjection = 0;
 
-        # Point does not handle 1D. Should we provide our own CellPoint class or interface?
-        # Can we test against instance variables? Properties? Better write a getter method?
-        # Add test to check dimension of sample against self.dimension
-
-    def getDimension(self):
+    def get_dimension(self):
         return self.dimension
 
-    def getSamplePoint(self):
+    def get_sample_point(self):
         return self.sample
+        # TODO: Add an exception if the sample is not right
 #         if self.sample: # check syntax here, how to tell if variable null in python?
 #             pass
 #         else
@@ -41,7 +44,7 @@ class Cell:
 #             # se we need a pointer to the Cad the cell belongs to
 
     # Should we add an exception if point.dimension != self.dimension?
-    def containsPoint(self, point) -> bool:
+    def contains_point(self, point) -> bool:
         # point should be of class Point from sympy geometry package
         # Do some magic here
         return False
@@ -51,7 +54,7 @@ class Stack:
     """
     Stack class
 
-    Init method constructs a stack over baseCell from a projection factor set
+    Init method constructs a stack over base_cell from a projection factor set taking the real roots and sorting them.
 
     When the projection factor set is a set of univariate polynomials with some roots,
     the result is a stack with a cell of dimension 0 for each root
@@ -92,7 +95,7 @@ class Stack:
     [0]
 
     When the projection factor set is a set of multivariate polynomials with roots,
-    the result is similar to the univariate case, but substitution of the baseCell
+    the result is similar to the univariate case, but substitution of the base_cell
     sample point is performed.
     >>> stack = Stack(Cell(2, [0, 0], None), [Poly(x**2+y**2+z**2-9), Poly(x**2+y**2+(z-1)**2-9)])
     >>> for c in stack.cells:
@@ -119,7 +122,7 @@ class Stack:
     [0, 0, 4.10000000000000]
 
     When the projection factor set is a set of multivariate polynomials with no roots,
-    the result is similar to the univariate case, but substitution of the baseCell
+    the result is similar to the univariate case, but substitution of the base_cell
     sample point is performed.
     >>> stack = Stack(Cell(2, [0, 0], None), [Poly(x**2+y**2+z**2+9)])
     >>> for c in stack.cells:
@@ -129,71 +132,64 @@ class Stack:
     ...     print(c.sample)
     [0, 0, 0]
     """
-    def __init__(self, baseCell, projectionFactor):
-        self.baseCell = baseCell
-#         self.cad = baseCell.cad  # how to handle the first stack?
-                                # Somehow we'll have to set this directly. Subclass? Another init?
+    def __init__(self, base_cell, projection_factor):
+        self.base_cell = base_cell
         self.roots = []
-        # p is a set of polynomials of the projectionFactor
-        for p in projectionFactor:
+        # p is a set of polynomials of the projection_factor
+        for p in projection_factor:
             q = p
+            if base_cell:
+                q = eval_better(p, base_cell.get_sample_point())
 
-            if baseCell:
-                # Ahora funciona :D
-                q = eval_better(p, baseCell.getSamplePoint())
-
-            newRoots = solve(q)
-            for purgedRoots in newRoots:
+            new_roots = solve(q)
+            for purgedRoots in new_roots:
                 if im(purgedRoots.evalf()) == 0:
                     self.roots.append(purgedRoots)
-                    #print('rooot : ', purgedRoots)
 
         self.roots.sort()
-        self.cells = self.constructStackCells(self.roots)
-
+        self.cells = self.construct_stack_cells(self.roots)
 
     # Private method
-    def constructStackCells(self, roots):
-        baseCell = Cell(0, [], self)
-        if self.baseCell:
-            baseCell = self.baseCell
+    def construct_stack_cells(self, roots):
+        base_cell = Cell(0, [], self)
+        if self.base_cell:
+            base_cell = self.base_cell
 
         # If no roots -> cell is R^n -> We take an arbitrary number (0)
-        if roots == []:
-            dim = baseCell.dimension + 1
-            return [Cell(dim, baseCell.sample + [0], self)]
+        if not roots:
+            dim = base_cell.dimension + 1
+            return [Cell(dim, base_cell.sample + [0], self)]
 
         cells = []
-        # declaro eps con un valor arbitrario para que compile
+        # We use an arbitrary number to define the cells of the boundary of our roots list.
         eps = 0.1
-        # Teniamos raíces repetidas, lo que probocaba la creacion de celdas de mas
-        # El siguiente parche cutre lo soluciona, pero no es lo mas eficiente.
-        # TODO: Arreglar esta chapuza
+        # We need to delete the repeated roots to avoid errors.
+        # TODO: Make it more efficient.
         original_roots = roots
         roots = []
         for i in original_roots:
             if i not in roots:
                 roots.append(i)
 
-        # print('rooooooots: ', roots, ' ', type(roots))
         # First cell
-        firstCell = Cell(baseCell.dimension + 1,
-                         baseCell.sample + [roots[0] - eps], self)
-        cells.append(firstCell)
+        first_cell = Cell(base_cell.dimension + 1, 
+                          base_cell.sample + [roots[0] - eps], self)
+        
+        cells.append(first_cell)
         for i in range(0, len(roots) - 1):
-            cellRoot = Cell(baseCell.dimension,
-                            baseCell.sample + [roots[i]], self)
-            cellNext = Cell(baseCell.dimension + 1,
-                            baseCell.sample + [(roots[i] + roots[i + 1]) / 2], self)
-            cells.extend([cellRoot, cellNext])
+            cell_root = Cell(base_cell.dimension,
+                             base_cell.sample + [roots[i]], self)
+            cell_next = Cell(base_cell.dimension + 1,
+                             base_cell.sample + [(roots[i] + roots[i + 1]) / 2], self)
+            cells.extend([cell_root, cell_next])
 
-        cellLastRoot = Cell(baseCell.dimension,
-                            baseCell.sample + [roots[-1]], self)
-        cells.append(cellLastRoot)
+        cell_last_root = Cell(base_cell.dimension,
+                              base_cell.sample + [roots[-1]], self)
+        cells.append(cell_last_root)
 
-        lastCell = Cell(baseCell.dimension + 1,
-                        baseCell.sample + [roots[-1] + eps], self)
-        cells.append(lastCell)
+        last_cell = Cell(base_cell.dimension + 1,
+                         base_cell.sample + [roots[-1] + eps], self)
+        cells.append(last_cell)
 
         return cells
 
@@ -201,129 +197,100 @@ class Stack:
 #     def getCad(self):
 #         return self.cad;
 
-    def getBaseCell(self):
-        return self.baseCell
+    def get_base_cell(self):
+        return self.base_cell
 
-    def getCell(self, i: int) -> Cell:
+    def get_cell(self, i: int) -> Cell:
         return self.cells[i]
 
-    def getNumberOfCells(self):
+    def get_number_of_cells(self):
         return len(self.cells)
 
-    def getDimension(self):
-        if self.baseCell:
-            return self.baseCell.dimension + 1
+    def get_dimension(self):
+        if self.base_cell:
+            return self.base_cell.dimension + 1
         return -1
 
-""" Cad.construct(projectionFactorSet) returns a list stackList of lists stacks were the i stacks element
+""" Cad.construct(projection_factor_set) returns a list stackList of lists stacks were the i stacks element
   is all the stacks of the i phase """
+
+
 class Cad:
+    """
+    This is the base class of the Cad.
+
+    Attributes:
+        dimension: the maximum dimension of the cad.
+        stackList: a list of stacks that makes the cad.
+
+    Methods:
+        construct: we construct the cad using the projection factor set.
+        contains_point: return true if the point is in the cad and false else
+        get_cell: return a n-cell
+    """
     def __init__(self):
         self.dimension = 0
         self.stackList = []
 
-    def construct(self, projectionFactorSet):
-        for setp in projectionFactorSet:
+    def construct(self, projection_factor_set):
+        # We put all the symbols in a list to use it latter in the eval_better function
+        for setp in projection_factor_set:
             for p in setp:
                 for symb in p.atoms(Symbol):
                     if symb not in allSymbols:
                         allSymbols.append(symb)
 
-        projectionFactor = projectionFactorSet[0]
-        stack = Stack(Cell(0, [], None), projectionFactor)
+        projection_factor = projection_factor_set[0]
+        stack = Stack(Cell(0, [], None), projection_factor)
         self.stackList.append([stack])
-        for i in range(1, len(projectionFactorSet)):
+        for i in range(1, len(projection_factor_set)):
             self.stackList.append([])
-            projectionFactor = projectionFactorSet[i]
-            for previosPhaseStack in self.stackList[i - 1]:
-                for cell in previosPhaseStack.cells:
-                    stack = Stack(cell, projectionFactor)
+            projection_factor = projection_factor_set[i]
+            for previousPhaseStack in self.stackList[i - 1]:
+                for cell in previousPhaseStack.cells:
+                    stack = Stack(cell, projection_factor)
                     self.stackList[i].append(stack)
 
-
-    def containsPoint(self, point) -> bool:
+    def contains_point(self, point) -> bool:
         pass
 
-    def cellExists(self, index: list):
+    def cell_exists(self, index: list):
         pass
 
-    """ si index tiene n coordenadas, nos devuelve la celda n-dimensional correspondiente """
-    def getCell(self, index: list):
+    def get_cell(self, index: list):
+        """
+        :param index: a list of n coordinates.
+        :return: The n-dimensional corresponding cell.
+        """
         pass
 
-    # metodo para añadir celdas (se usa en cada iteración para añadir las nuevas celdas)
 
-    def addCell(self, cell: Cell):
-        self.cells.append(cell)
-        if self.dimension < cell.dimension:
-            self.dimension = cell.dimension
+def cad_extension(cad, projection_factor_set):
+    """
+    :param cad: the cad that we want to extend
+    :param projection_factor_set: the projection factor set that of one dimension more than the cad that we will use to
+        extend
+    :return: the extended cad
 
+    This method does:
+    For each stack in cad
+        for each cell in stack
+            we build a new stack in that cell and add the new stack to the original cad
+    """
 
-def cadExtension(cad, projectionFactorSet):
-    # para stack
-    #     para celda del stack
-    #         me construyo el nuevo stack sobre esta celda
-    #         y añado el nuevo stack en este mismo cad
     for stack in cad.stacks:
         for cell in stack:
-            newStack = Stack(cell, projectionFactorSet)
-            cad.stacks.append(newStack)
+            new_stack = Stack(cell, projection_factor_set)
+            cad.stacks.append(new_stack)
     return cad
 
 
-# Hay que escribir funcion que construia cad caso base
-def baseCad(projectionFactorSet):
-#     """
-#     Constructing a base cad for a polinomial gives us a cad of dimension 1
-#     (intervals and points)
-#     >>> cad = baseCad([Poly(x**2-1)])
-#     >>> cad.dimension
-#     1
-#     """
-    # Tenemos n polinomios de una variable. A partir de sus r raíces
-    # obtenemos las primeras r+1 celdas
-    roots = []
-    baseCad = Cad()
-    for p in projectionFactorSet:
-        # añado las raíces a el conjunto de raíces.
-        for r in solve(p):
-            roots.append(r)
-
-
-    # ordeno las raíces para crear mi conjunto de indices.
-    roots.sort()
-
-    stack = (None, projectionFactorSet)  # this is a hack, which stack shall we put here?
-    eps = 0.1
-    j = 0
-
-    for i in range(0, 2 * len(roots) + 1):
-        # Añadimos los puntos muestra(que tienen solo una coordenada)
-        if i == 0:
-            cell = Cell(1, [roots[0] - eps], stack)
-            baseCad.addCell(cell)
-            cell = Cell(1, [roots[0]], stack)
-            baseCad.addCell(cell)
-            j += 1
-
-        elif i == 2 * len(roots):
-            cell = Cell(1, [roots[-1] + eps], stack)
-            baseCad.addCell(cell)
-
-        # si estamos en una celda par añade el punto medio, si no añade la raíz como punto muestra.
-        elif i % 2 == 0:
-            if (j + 1) < len(roots):
-                cell = Cell(1, [(roots[j] + roots[j + 1]) / 2], stack)
-                baseCad.addCell(cell)
-                j += 1
-        else:
-            if j < len(roots) and i < 2 * len(roots) - 1:
-                cell = Cell(0, roots[j], stack)
-                baseCad.addCell(cell)
-    return baseCad
-
-
 def eval_better(p, sample):
+    """
+    :param p: a polynomial of n variables.
+    :param sample: a sample point of n-1 variables.
+    :return: the polynomial evaluated in the n-1 variables (if they're present)
+    """
     n = len(sample)
     psyms = p.atoms(Symbol)
     m = len(psyms)
@@ -334,8 +301,6 @@ def eval_better(p, sample):
         if allSymbols[i] in psyms:
             p = p.eval(allSymbols[i], sample[i])
     return p
-
-
 
 # Execute doctest when run from the command line
 if __name__ == "__main__":

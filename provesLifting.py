@@ -30,7 +30,7 @@ projectionFactorSet = ([
 ])
 cad = Cad()
 cad.construct(projectionFactorSet)
-#printSamples(cad)
+printSamples(cad)
 # FUNCIONA
 
 
