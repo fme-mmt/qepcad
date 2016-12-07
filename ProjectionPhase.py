@@ -21,6 +21,10 @@ def SyHa(P, Q, j, v):
 def sRes(P, Q, j=-1, v=0):
     if not v:
         v = P.gens[-1]
+
+    P = poly(P)
+    Q = poly(Q)
+
     p = P.degree(v)
     q = Q.degree(v)
 
@@ -30,7 +34,7 @@ def sRes(P, Q, j=-1, v=0):
             return sign(LC(P, v))
         elif p > j > q:
             return 0
-        sh = SyHa(P,Q,j,v)
+        sh = SyHa(P, Q, j, v)
         assert sh.shape[0] == n
         return (sh[:,:n]).det()
 
@@ -93,10 +97,10 @@ def proj1(poly_set, x):
                     psc_1 = PSC(G, H, x)
                     if len(psc_1):
                         if degree(G) == 2:
-                            p_out.append(psc_1[0])
+                            p_out.append(poly(psc_1[0]))
                         else:
                             for aux in psc_1[0:degree(G) - 2]:
-                                p_out.append(aux)
+                                p_out.append(poly(aux))
     return p_out
 
 
@@ -117,40 +121,62 @@ def proj2(poly_set, x):
                                 psc = PSC(H, I, x)
                                 if len(psc) > 0:
                                     if degree(I, x) == 1:
-                                        p_out.append(psc[0])
+                                        p_out.append(poly(psc[0]))
                                     else:
                                         for aux in psc[0:degree(I, x) - 1]:
-                                            p_out.append(aux)
+                                            p_out.append(poly(aux))
 
                             elif degree(H, x) < degree(I, x):
                                 psc = PSC(I, H, x)
                                 if len(psc) > 0:
                                     if degree(H, x) == 1:
-                                        p_out.append(psc[0])
+                                        p_out.append(poly(psc[0]))
                                     else:
                                         for aux in psc[0:degree(H, x) - 1]:
-                                            p_out.append(aux)
+                                            p_out.append(poly(aux))
 
                             elif degree(H, x) == degree(I, x):
                                 HH = H.mul_ground(LC(I)).add(-I.mul_ground(LC(H)))
                                 psc = PSC(I, HH, x)
                                 if len(psc) > 0:
                                     if degree(HH, x) == 1:
-                                        p_out.append(psc[0])
+                                        p_out.append(poly(psc[0]))
                                     else:
                                         for aux in psc[0:degree(HH, x) - 1]:
-                                            p_out.append(aux)
+                                            p_out.append(poly(aux))
 
     return p_out
 
 
-def proj(proj_set, x):
+def iter_proj(proj_set, x):
     p_out = []
     for aux in proj1(proj_set, x):
-        p_out.append(aux)
+        p_out.append(poly(aux))
 
     for aux in proj2(proj_set, x):
-        p_out.append(aux)
+        p_out.append(poly(aux))
 
-    print('proj: ', p_out)
     return p_out
+
+
+def proj(proj_set):
+    p_out = []
+    var_set = set()
+    for p in proj_set:
+        p = poly(p)
+        q = p.gens
+        for var in q:
+            var_set.add(var)
+
+    p_out.append(proj_set)
+    removed_var = []
+    for i, var in enumerate(var_set):
+        if i < len(var_set) - 1:
+            proj_set = iter_proj(proj_set, var)
+            p_out.append(proj_set)
+            removed_var.append(var)
+
+    output = {'projection': p_out, 'variables': removed_var}
+    print('output = ', output)
+    return output
+
