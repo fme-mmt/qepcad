@@ -1,5 +1,6 @@
-from sympy import *
+#from sympy import *
 from sympy import poly
+from sympy import degree, diff
 from sympy.abc import *
 from sympy import LT
 from sympy import subresultants
@@ -11,9 +12,12 @@ coefs = lambda n, v, p: [p.as_expr().coeff(v, k) for k in range(n)][::-1]
 
 
 def SyHa(P, Q, j, v):
+    P = poly(P)
+    Q = poly(Q)
+
     p = P.degree(v)
     q = Q.degree(v)
-    assert P.gens == Q.gens
+    #assert P.gens == Q.gens
     coef = partial(coefs, p+q-j, v)
     return Matrix([coef(P*v**k) for k in range(q-j-1, -1, -1)] + [coef(Q*v**k) for k in range(0, p-j, 1)])
 
@@ -145,6 +149,7 @@ def iter_proj(proj_set, x):
     for aux in proj2(proj_set, x):
         p_out.append(poly(aux))
 
+    print('p_out: ', p_out)
     return p_out
 
 
@@ -168,4 +173,13 @@ def proj(proj_set):
     output = {'projection': p_out, 'variables': removed_var}
     print('output = ', output)
     return output
+
+
+
+poly1 = poly(x**2 + y**2 - 4*x)
+poly2 = poly(x**2 + y**2 - 4*z)
+poly3 = poly(z)
+polys = [poly1, poly2, poly3]
+
+proj(polys)
 
