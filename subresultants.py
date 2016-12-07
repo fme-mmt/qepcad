@@ -18,30 +18,30 @@ def PSC(F, G, x):
     If the degree of the polynomial F is strictly less than the degree of
     the polynomial G, then F and G are interchanged.
 
-    >>> PSC(0, 0, var('y'))
+    >>> PSC(0, 0, var('x'))
     set()
-    >>> PSC(poly('2*y'), poly('3*x'), var('y'))
-    {3*x}
-    >>> PSC(poly('2*y'), poly('3*x + 5*y**2'), var('y'))
-    {12*x, 2}
-    >>> PSC(poly('y**3'), poly('y**3 + y'), var('y'))
+    >>> PSC(poly('2*x'), poly('3*y'), var('x'))
+    {3*y}
+    >>> PSC(poly('2*x'), poly('3*y + 5*x**2'), var('x')) == {12*var('y'), 2}
+    True
+    >>> PSC(poly('x**3'), poly('x**3 + x'), var('x'))
     {1}
     """
-    s = set()
-    subs = subresultants(F, G, x)
-    deg1 = degree(F, x)
-    deg2 = degree(G, x)
-    if deg1 < deg2:
+    degF = degree(F, x)
+    degG = degree(G, x)
+    if degF < degG:
         [F, G] = [G, F]
-        [deg1, deg2] = [deg2, deg1]
+        [degF, degG] = [degG, degF]
+    subs = subresultants(F, G, x)
+    s = set()
     i = len(subs) - 1
     while i > 1:
         coef = LC(subs[i], x)
-        deg = degree(subs[i], x)
-        s.add( coef**(deg2-i+2-deg) )
+        degS = degree(subs[i], x)
+        s.add( coef**(degG-i+2-degS) )
         i -= 1
     if i > 0:
-        s.add( LC(subs[i], x)**(deg1-deg2) )
+        s.add( LC(subs[i], x)**(degF-degG) )
     return s
 
 
