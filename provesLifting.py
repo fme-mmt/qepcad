@@ -30,7 +30,7 @@ projectionFactorSet = ([
 ])
 cad = Cad()
 cad.construct(projectionFactorSet)
-#printSamples(cad)
+printSamples(cad)
 # FUNCIONA
 
 
@@ -91,10 +91,27 @@ projectionFactorSet4 = ([{Poly(x + sqrt(2)), Poly(x - sqrt(2))}, {Poly(x**2 + y*
 
 cad4 = Cad()
 cad4.construct(projectionFactorSet4)
-printSamples(cad4)
-# FUNCIONA ???
+#printSamples(cad4)
+# FUNCIONA
 
-"""cosas que he usado para testear :
+
+"""
+Calculeu el volum del recinte limitat lateralment pel cilindre $x^2+y^2 = 4x$,
+ superiorment pel paraboloide $x^2 + y^2 = 4z$ i inferiorment pel pla $z=0$.
+"""
+
+print('Ejemplo 5')
+projectionFactorSet5 = ([{Poly(x+4), Poly(x-4), Poly(x**2-4*x)},
+                         {Poly(x**2+y**2), Poly(x**2+y**2-4*x)},
+                         {Poly(x**2+y**2-4*x), Poly(x**2+y**2-4*z), Poly(z)}
+                         ])
+
+cad5 = Cad()
+cad5.construct(projectionFactorSet5)
+printSamples(cad5)
+
+"""
+cosas que he usado para testear :
 """
 
 allSymbols = []
