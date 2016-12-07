@@ -74,17 +74,6 @@ def reducta(F, x):
     return res
 
 
-# exemple del llibre (o l'article)
-# p = poly((x**2 +y**2 - 1)*z**3 + (x-1)*z**2 + (x-1)**2 + y**2)
-# p
-# red(p, z)
-# reducta(p, z)
-
-# no esta gens refinat a nivell de cost
-# especialment tota la part de fer dos RED, esta fatal en aquest sentit
-
-# computes the operation PROJ (not all the projection fase)
-# projection of the polynomials in A, as polynomials of I_r[x]
 def proj1(poly_set, x):
     p_out = []
     # F is a polynomial in A
