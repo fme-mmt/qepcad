@@ -7,14 +7,15 @@ from sympy import Matrix, sign
 from sympy.polys.polytools import LC
 from functools import partial
 
-coefs = lambda n, v, p: [p.as_expr().coeff(v,k) for k in range(n)][::-1]
+coefs = lambda n, v, p: [p.as_expr().coeff(v, k) for k in range(n)][::-1]
+
 
 def SyHa(P, Q, j, v):
     p = P.degree(v)
     q = Q.degree(v)
     assert P.gens == Q.gens
     coef = partial(coefs, p+q-j, v)
-    return Matrix([coef(P*v**k) for k in range(q-j-1,-1,-1)] + [coef(Q*v**k) for k in range(0,p-j,1)])
+    return Matrix([coef(P*v**k) for k in range(q-j-1, -1, -1)] + [coef(Q*v**k) for k in range(0, p-j, 1)])
 
 
 def sRes(P, Q, j=-1, v=0):
@@ -22,8 +23,6 @@ def sRes(P, Q, j=-1, v=0):
         v = P.gens[-1]
     p = P.degree(v)
     q = Q.degree(v)
-    #if p <= q:
-        #raise ValueError("P must have a greater degree than Q")
 
     def sres(j):
         n = p + q -2*j
@@ -32,14 +31,11 @@ def sRes(P, Q, j=-1, v=0):
         elif p > j > q:
             return 0
         sh = SyHa(P,Q,j,v)
-        #import pdb; pdb.set_trace()
-        #print('sh: ', sh)
-        #print('n: ', n)
         assert sh.shape[0] == n
         return (sh[:,:n]).det()
 
-    if j==-1:
-        return [sres(j) for j in range(p,-1,-1)]
+    if j == -1:
+        return [sres(j) for j in range(p, -1, -1)]
 
     return sres(j)
 
@@ -48,13 +44,10 @@ def PSC(F, G, x):
     n = min(degree(F, x), degree(G, x))
     if n < 0:
         return []
-    #subs = subresultants(F, G, x)[2:]    # subresultants PRS
     subs = sRes(F, G, -1, x)[2:]  # subresultants PRS
     s = []
     for p in reversed(subs):
         s.append(LC(p, x))
-    #s.append(1);  # SIAM defines it as 1 but WolframAlpha sometimes says otherwise
-    print(s)
     return s
 
 
@@ -92,98 +85,72 @@ def proj1(poly_set, x):
     p_out = []
     # F is a polynomial in A
     for F in poly_set:
-        #print('F: ', F)
-        if (degree(F, x) > 1):
+        if degree(F, x) > 1:
             R = reducta(F, x)
-            #print('Reducta: ', R)
             for G in R:
                 if degree(G, x) > 0:
-                    #print('LC: ', LC(G,x))
-                    #p_out.append(LC(G, x))
                     H = diff(G, x)
                     psc_1 = PSC(G, H, x)
-                    #print('psc1: ', psc_1)
                     if len(psc_1):
-                        if (degree(G) == 2):
+                        if degree(G) == 2:
                             p_out.append(psc_1[0])
                         else:
-                            p_out.append(psc_1[0:degree(G) - 2])
-    #print('proj1: ', p_out)
+                            for aux in psc_1[0:degree(G) - 2]:
+                                p_out.append(aux)
     return p_out
 
 
 def proj2(poly_set, x):
-    #print('********************************************************proj2******************************************************** ')
     p_out = []
     # F is a polynomial in A
     for i in range(len(poly_set)):
         F = poly_set[i]
         R = reducta(F, x)
-        #print('Reducta R: ', R)
         for j in range(i + 1, len(poly_set)):
             G = poly_set[j]
             S = reducta(G, x)
-            #print('Reducta S: ', S)
             for H in R:
-                #print('H: ', H)
                 if degree(H, x) > 0:
                     for I in S:
-                        #print('I: ', I)
                         if degree(I, x) > 0:
-                            if (degree(H, x) > degree(I, x)):
-                                if (degree(I, x) == 1):
-                                    p_out.append(PSC(H, I, x)[0])
-                                else:
-                                    p_out.append(
-                                        PSC(H, I, x)[0:degree(I, x) - 1])  # s'han de fer els psc j-èssim, amb j = 0...deg(I)-1
+                            if degree(H, x) > degree(I, x):
+                                psc = PSC(H, I, x)
+                                if len(psc) > 0:
+                                    if degree(I, x) == 1:
+                                        p_out.append(psc[0])
+                                    else:
+                                        for aux in psc[0:degree(I, x) - 1]:
+                                            p_out.append(aux)
 
-                            elif (degree(H, x) < degree(I, x)):
-                                if (degree(H, x) == 1):
-                                    p_out.append(PSC(I, H, x)[0])
-                                else:
-                                    p_out.append(
-                                        PSC(I, H, x)[0:degree(H, x) - 1])  # s'han de fer els psc j-èssim, amb j = 0...deg(H)-1
+                            elif degree(H, x) < degree(I, x):
+                                psc = PSC(I, H, x)
+                                if len(psc) > 0:
+                                    if degree(H, x) == 1:
+                                        p_out.append(psc[0])
+                                    else:
+                                        for aux in psc[0:degree(H, x) - 1]:
+                                            p_out.append(aux)
 
-                            elif (degree(H, x) == degree(I, x)):
+                            elif degree(H, x) == degree(I, x):
                                 HH = H.mul_ground(LC(I)).add(-I.mul_ground(LC(H)))
-                                #print('HH: ', HH)
-                                if (degree(HH, x) == 1):
-                                    p_out.append(PSC(I, HH, x)[0])
-                                else:
-                                    p_out.append(
-                                        PSC(I, HH, x)[0:degree(HH, x) - 1])  # s'han de fer els psc j-èssim, amb j = 0...deg(HH)-1
+                                psc = PSC(I, HH, x)
+                                if len(psc) > 0:
+                                    if degree(HH, x) == 1:
+                                        p_out.append(psc[0])
+                                    else:
+                                        for aux in psc[0:degree(HH, x) - 1]:
+                                            p_out.append(aux)
 
-    #print('proj2: ', p_out)
     return p_out
 
 
 def proj(proj_set, x):
     p_out = []
-    p_out.append(proj1(proj_set, x))
-    p_out.append(proj2(proj_set, x))
-    # Treiem els claudators del output
-    # aux = set()
-    # for i in enumerate(p_out):
-    #     elem = p_out[i]
-    #     for j in enumerate(elem):
-    #
-    #         aux = aux.add(elem[j])
-    #
-    # print('proj: ', list(aux))
-    # return list(aux)
+    for aux in proj1(proj_set, x):
+        p_out.append(aux)
+
+    for aux in proj2(proj_set, x):
+        p_out.append(aux)
+
     print('proj: ', p_out)
-    return  p_out
-
-
-A = poly(y ** 2 - x * (x + 1) * (x - 2))
-B = poly(y ** 2 - (x + 2) * (x - 1) * (x - 3))
-C = [poly(x ** 2 + y ** 2 + z ** 2 - 4)]
-#D = [poly(y ** 2 - x * (x + 1) * (x - 2)), poly(y ** 2 - (x + 2) * (x - 1) * (x - 3))]  # B,C
-
-# B = poly(144*y**2 + 96*x**2*y + 9*x**4 + 105*x**2 + 70*x - 98)
-# C = poly(x*y**2 + 6*x*y + x**3 + 9*x)
-# A = [poly(144*y**2 + 96*x**2*y + 9*x**4 + 105*x**2 + 70*x - 98), poly(x*y**2 + 6*x*y + x**3 + 9*x)]
-# D = z
-
-D = [poly(x - y), poly(x**2 + y**2 - 1)]
-p = proj(C, z)
+    return p_out
