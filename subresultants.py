@@ -14,6 +14,9 @@ def PSC(F, G, x):
     The n-th psc, where n is the minimum of the degrees of F and G with
     respect to x, is defined as 1 when F and G have the same degree.
     Extended psc beyond the n-th are not considered.
+    
+    If the degree of the polynomial F is strictly less than the degree of
+    the polynomial G, then F and G are interchanged.
 
     >>> PSC(0, 0, var('y'))
     set()
@@ -24,16 +27,21 @@ def PSC(F, G, x):
     >>> PSC(poly('y**3'), poly('y**3 + y'), var('y'))
     {1}
     """
-    d1 = degree(F, x)
-    d2 = degree(G, x)
-    if d1 < d2:
-        [F, G] = [G, F]
     s = set()
-    subs = subresultants(F, G, x)[2:]
-    for p in reversed(subs):
-        s.add( LC(p, x) )
-    if G != 0:
-        s.add( 1 if d1==d2 else LC(G, x) )
+    subs = subresultants(F, G, x)
+    deg1 = degree(F, x)
+    deg2 = degree(G, x)
+    if deg1 < deg2:
+        [F, G] = [G, F]
+        [deg1, deg2] = [deg2, deg1]
+    i = len(subs) - 1
+    while i > 1:
+        coef = LC(subs[i], x)
+        deg = degree(subs[i], x)
+        s.add( coef**(deg2-i+2-deg) )
+        i -= 1
+    if i > 0:
+        s.add( LC(subs[i], x)**(deg1-deg2) )
     return s
 
 
