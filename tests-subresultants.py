@@ -1,11 +1,133 @@
 import sympy
-from sympy import var
+from sympy import symbols
 
 import subresultants
 from subresultants import PSC
 
-x = var('x')
-y = var('y')
+a0, a1, a2, a3, a4 = symbols('a0 a1 a2 a3 a4')
+b0, b1, b2, b3, b4 = symbols('b0 b1 b2 b3 b4')
+x = symbols('x')
+
+# Maximum degree -infinity
+assert(PSC(0, 0, x) == set())
+
+# Maximum degree 0
+assert(PSC(a0, 0, x) == set())
+assert(PSC(a0, b0, x) == {1})
+
+assert(PSC(a0, 0, x) == PSC(0, a0, x))
+
+# Maximum degree 1
+assert(PSC(a1*x, 0, x) == set())
+assert(PSC(a1*x, b0, x) == {b0})
+assert(PSC(a1*x, b1*x, x) == {1}) # The psc are {0, 1}
+assert(PSC(a1*x, b0+b1*x, x) == {a1*b0, 1})
+assert(PSC(a0+a1*x, 0, x) == set())
+assert(PSC(a0+a1*x, b0, x) == {b0})
+assert(PSC(a0+a1*x, b1*x, x) == {- a0*b1, 1})
+assert(PSC(a0+a1*x, b0+b1*x, x) == {a1*b0 - a0*b1, 1})
+
+assert(PSC(a1*x, 0, x) == PSC(0, a1*x, x))
+assert(PSC(a1*x, b0, x) == PSC(b0, a1*x, x))
+assert(PSC(a0+a1*x, 0, x) == PSC(0, a0+a1*x, x))
+assert(PSC(a0+a1*x, b0, x) == PSC(b0, a0+a1*x, x))
+
+# Maximum degree 2
+assert(PSC(a2*x**2, 0, x) == set())
+assert(PSC(a2*x**2, b0, x) == {b0**2})
+assert(PSC(a2*x**2, b1*x, x) == {b1}) # The psc are {0, b1}
+assert(PSC(a2*x**2, b0+b1*x, x) == {a2*b0**2, b1})
+assert(PSC(a2*x**2, b2*x**2, x) == {1}) # The psc are {0, 0, b1}
+assert(PSC(a2*x**2, b0+b2*x**2, x) == {a2**2*b0**2, 1}) # The psc are {a2**2*b0**2, 0, 1}
+assert(PSC(a2*x**2, b1*x+b2*x**2, x) == {a2*b1, 1}) # The psc are {0, a2*b1, 1}
+assert(PSC(a2*x**2, b0+b1*x+b2*x**2, x) == {a2**2*b0**2, a2*b1, 1})
+assert(PSC(a0+a2*x**2, 0, x) == set())
+assert(PSC(a0+a2*x**2, b0, x) == {b0**2})
+assert(PSC(a0+a2*x**2, b1*x, x) == {a0*b1**2, b1})
+assert(PSC(a0+a2*x**2, b0+b1*x, x) == {a2*b0**2 + a0*b1**2, b1})
+assert(PSC(a0+a2*x**2, b2*x**2, x) == {a0**2*b2**2, 1}) # The psc are {a0**2*b2**2, 0, 1}
+assert(PSC(a0+a2*x**2, b0+b2*x**2, x) == {(-a0*b2 + a2*b0)**2, 1}) # The psc are {(-a0*b2 + a2*b0)**2, 0, 1}
+assert(PSC(a0+a2*x**2, b1*x+b2*x**2, x) == {a0*a2*b1**2 + a0**2*b2**2, a2*b1, 1})
+assert(PSC(a0+a2*x**2, b0+b1*x+b2*x**2, x) == {a2**2*b0**2 + a0*a2*b1**2 - 2*a0*a2*b0*b2 + a0**2*b2**2, a2*b1, 1})
+assert(PSC(a1*x+a2*x**2, 0, x) == set())
+assert(PSC(a1*x+a2*x**2, b0, x) == {b0**2})
+assert(PSC(a1*x+a2*x**2, b1*x, x) == {b1}) # The psc are {0, b1}
+assert(PSC(a1*x+a2*x**2, b0+b1*x, x) == {a2*b0**2 - a1*b0*b1, b1})
+assert(PSC(a1*x+a2*x**2, b2*x**2, x) == {- a1*b2, 1}) # The psc are {0, - a1*b2, 1}
+assert(PSC(a1*x+a2*x**2, b0+b2*x**2, x) == {a2**2*b0**2 + a1**2*b0*b2, -(a1*b2), 1})
+assert(PSC(a1*x+a2*x**2, b1*x+b2*x**2, x) == {a2*b1 - a1*b2, 1}) # The psc are {0, a2*b1 - a1*b2, 1}
+assert(PSC(a1*x+a2*x**2, b0+b1*x+b2*x**2, x) == {a2**2*b0**2 - a1*a2*b0*b1 + a1**2*b0*b2, a2*b1 - a1*b2, 1})
+assert(PSC(a0+a1*x+a2*x**2, 0, x) == set())
+assert(PSC(a0+a1*x+a2*x**2, b0, x) == {b0**2})
+assert(PSC(a0+a1*x+a2*x**2, b1*x, x) == {a0*b1**2, b1})
+assert(PSC(a0+a1*x+a2*x**2, b0+b1*x, x) == {a2*b0**2 - a1*b0*b1 + a0*b1**2, b1})
+assert(PSC(a0+a1*x+a2*x**2, b2*x**2, x) == {a0**2*b2**2, -(a1*b2), 1})
+assert(PSC(a0+a1*x+a2*x**2, b0+b2*x**2, x) == {a2**2*b0**2 + a1**2*b0*b2 - 2*a0*a2*b0*b2 + a0**2*b2**2, -(a1*b2), 1})
+assert(PSC(a0+a1*x+a2*x**2, b1*x+b2*x**2, x) == {a0*a2*b1**2 - a0*a1*b1*b2 + a0**2*b2**2, a2*b1 - a1*b2, 1})
+assert(PSC(a0+a1*x+a2*x**2, b0+b1*x+b2*x**2, x) == {a2**2*b0**2 - a1*a2*b0*b1 + a0*a2*b1**2 + a1**2*b0*b2 - 2*a0*a2*b0*b2 - a0*a1*b1*b2 + a0**2*b2**2, a2*b1 - a1*b2, 1})
+
+assert(PSC(a2*x**2, 0, x) == PSC(0, a2*x**2, x))
+assert(PSC(a2*x**2, b0, x) == PSC(b0, a2*x**2, x))
+assert(PSC(a2*x**2, b1*x, x) == PSC(b1*x, a2*x**2, x))
+assert(PSC(a2*x**2, b0+b1*x, x) == PSC(b0+b1*x, a2*x**2, x))
+assert(PSC(a0+a2*x**2, 0, x) == PSC(0, a0+a2*x**2, x))
+assert(PSC(a0+a2*x**2, b0, x) == PSC(b0, a0+a2*x**2, x))
+assert(PSC(a0+a2*x**2, b1*x, x) == PSC(b1*x, a0+a2*x**2, x))
+assert(PSC(a0+a2*x**2, b0+b1*x, x) == PSC(b0+b1*x, a0+a2*x**2, x))
+assert(PSC(a1*x+a2*x**2, 0, x) == PSC(0, a1*x+a2*x**2, x))
+assert(PSC(a1*x+a2*x**2, b0, x) == PSC(b0, a1*x+a2*x**2, x))
+assert(PSC(a1*x+a2*x**2, b1*x, x) == PSC(b1*x, a1*x+a2*x**2, x))
+assert(PSC(a1*x+a2*x**2, b0+b1*x, x) == PSC(b0+b1*x, a1*x+a2*x**2, x))
+assert(PSC(a0+a1*x+a2*x**2, 0, x) == PSC(0, a0+a1*x+a2*x**2, x))
+assert(PSC(a0+a1*x+a2*x**2, b1, x) == PSC(b1, a0+a1*x+a2*x**2, x))
+assert(PSC(a0+a1*x+a2*x**2, b1*x, x) == PSC(b1*x, a0+a1*x+a2*x**2, x))
+assert(PSC(a0+a1*x+a2*x**2, b0+b1*x, x) == PSC(b0+b1*x, a0+a1*x+a2*x**2, x))
+
+# Maximum degree 3
+assert(PSC(a3*x**3, 0, x) == set())
+assert(PSC(a3*x**3, b0, x) == {b0**3})
+assert(PSC(a3*x**3, b1*x, x) == {b1**2}) # The psc are {0, b1**2}
+assert(PSC(a3*x**3, b0+b1*x, x) == {a3*b0**3, b1**2})
+assert(PSC(a3*x**3, b2*x**2, x) == {b2}) # The psc are {0, 0, b2}
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3, 0, x) == set())
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3, b0, x) == {b0**3})
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3, b0+b1*x, x) == {a3*b0**3 - a2*b0**2*b1 + a1*b0*b1**2 - a0*b1**3, b1**2})
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3, b0+b1*x+b2*x**2, x) == {a3**2*b0**3 - a2*a3*b0**2*b1 + a1*a3*b0*b1**2 - a0*a3*b1**3 + a2**2*b0**2*b2 - 2*a1*a3*b0**2*b2 - a1*a2*b0*b1*b2 + 3*a0*a3*b0*b1*b2 + a0*a2*b1**2*b2 + a1**2*b0*b2**2 - 2*a0*a2*b0*b2**2 - a0*a1*b1*b2**2 + a0**2*b2**3, a3*b1**2 - a3*b0*b2 - a2*b1*b2 + a1*b2**2, b2})
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3, b0+b1*x+b2*x**2+b3*x**3, x) == {a3**3*b0**3 - a2*a3**2*b0**2*b1 + a1*a3**2*b0*b1**2 - a0*a3**2*b1**3 + a2**2*a3*b0**2*b2 - 2*a1*a3**2*b0**2*b2 - a1*a2*a3*b0*b1*b2 + 3*a0*a3**2*b0*b1*b2 + a0*a2*a3*b1**2*b2 + a1**2*a3*b0*b2**2 - 2*a0*a2*a3*b0*b2**2 - a0*a1*a3*b1*b2**2 + a0**2*a3*b2**3 - a2**3*b0**2*b3 + 3*a1*a2*a3*b0**2*b3 - 3*a0*a3**2*b0**2*b3 + a1*a2**2*b0*b1*b3 - 2*a1**2*a3*b0*b1*b3 - a0*a2*a3*b0*b1*b3 - a0*a2**2*b1**2*b3 + 2*a0*a1*a3*b1**2*b3 - a1**2*a2*b0*b2*b3 + 2*a0*a2**2*b0*b2*b3 + a0*a1*a3*b0*b2*b3 + a0*a1*a2*b1*b2*b3 - 3*a0**2*a3*b1*b2*b3 - a0**2*a2*b2**2*b3 + a1**3*b0*b3**2 - 3*a0*a1*a2*b0*b3**2 + 3*a0**2*a3*b0*b3**2 - a0*a1**2*b1*b3**2 + 2*a0**2*a2*b1*b3**2 + a0**2*a1*b2*b3**2 - a0**3*b3**3, a3**2*b1**2 - a3**2*b0*b2 - a2*a3*b1*b2 + a1*a3*b2**2 + a2*a3*b0*b3 + a2**2*b1*b3 - 2*a1*a3*b1*b3 - a1*a2*b2*b3 + a0*a3*b2*b3 + a1**2*b3**2 - a0*a2*b3**2, a3*b2 - a2*b3, 1})
+# ...
+
+assert(PSC(a3*x**3, 0, x) == PSC(0, a3*x**3, x))
+assert(PSC(a3*x**3, b0, x) == PSC(b0, a3*x**3, x))
+assert(PSC(a3*x**3, b1*x, x) == PSC(b1*x, a3*x**3, x))
+assert(PSC(a3*x**3, b0+b1*x, x) == PSC(b0+b1*x, a3*x**3, x))
+assert(PSC(a3*x**3, b2*x**2, x) == PSC(b2*x**2, a3*x**3, x))
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3, 0, x) == PSC(0, a0+a1*x+a2*x**2+a3*x**3, x))
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3, b0, x) == PSC(b0, a0+a1*x+a2*x**2+a3*x**3, x))
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3, b0+b1*x, x) == PSC(b0+b1*x, a0+a1*x+a2*x**2+a3*x**3, x))
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3, b0+b1*x+b2*x**2, x) == PSC(b0+b1*x+b2*x**2, a0+a1*x+a2*x**2+a3*x**3, x))
+# ...
+
+# Maximum degree 4
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, 0, x) == set())
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, b0, x) == {b0**4})
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, b0+b1*x, x) == {a4*b0**4 - a3*b0**3*b1 + a2*b0**2*b1**2 - a1*b0*b1**3 + a0*b1**4, b1**3})
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, b0+b1*x+b2*x**2, x) == {a4**2*b0**4 - a3*a4*b0**3*b1 + a2*a4*b0**2*b1**2 - a1*a4*b0*b1**3 + a0*a4*b1**4 + a3**2*b0**3*b2 - 2*a2*a4*b0**3*b2 - a2*a3*b0**2*b1*b2 + 3*a1*a4*b0**2*b1*b2 + a1*a3*b0*b1**2*b2 - 4*a0*a4*b0*b1**2*b2 - a0*a3*b1**3*b2 + a2**2*b0**2*b2**2 - 2*a1*a3*b0**2*b2**2 + 2*a0*a4*b0**2*b2**2 - a1*a2*b0*b1*b2**2 + 3*a0*a3*b0*b1*b2**2 + a0*a2*b1**2*b2**2 + a1**2*b0*b2**3 - 2*a0*a2*b0*b2**3 - a0*a1*b1*b2**3 + a0**2*b2**4, a4*b1**3 - 2*a4*b0*b1*b2 - a3*b1**2*b2 + a3*b0*b2**2 + a2*b1*b2**2 - a1*b2**3, b2**2})
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, b0+b1*x+b2*x**2+b3*x**3, x) == {a4**3*b0**4 - a3*a4**2*b0**3*b1 + a2*a4**2*b0**2*b1**2 - a1*a4**2*b0*b1**3 + a0*a4**2*b1**4 + a3**2*a4*b0**3*b2 - 2*a2*a4**2*b0**3*b2 - a2*a3*a4*b0**2*b1*b2 + 3*a1*a4**2*b0**2*b1*b2 + a1*a3*a4*b0*b1**2*b2 - 4*a0*a4**2*b0*b1**2*b2 - a0*a3*a4*b1**3*b2 + a2**2*a4*b0**2*b2**2 - 2*a1*a3*a4*b0**2*b2**2 + 2*a0*a4**2*b0**2*b2**2 - a1*a2*a4*b0*b1*b2**2 + 3*a0*a3*a4*b0*b1*b2**2 + a0*a2*a4*b1**2*b2**2 + a1**2*a4*b0*b2**3 - 2*a0*a2*a4*b0*b2**3 - a0*a1*a4*b1*b2**3 + a0**2*a4*b2**4 - a3**3*b0**3*b3 + 3*a2*a3*a4*b0**3*b3 - 3*a1*a4**2*b0**3*b3 + a2*a3**2*b0**2*b1*b3 - 2*a2**2*a4*b0**2*b1*b3 - a1*a3*a4*b0**2*b1*b3 + 4*a0*a4**2*b0**2*b1*b3 - a1*a3**2*b0*b1**2*b3 + 2*a1*a2*a4*b0*b1**2*b3 + a0*a3*a4*b0*b1**2*b3 + a0*a3**2*b1**3*b3 - 2*a0*a2*a4*b1**3*b3 - a2**2*a3*b0**2*b2*b3 + 2*a1*a3**2*b0**2*b2*b3 + a1*a2*a4*b0**2*b2*b3 - 5*a0*a3*a4*b0**2*b2*b3 + a1*a2*a3*b0*b1*b2*b3 - 3*a0*a3**2*b0*b1*b2*b3 - 3*a1**2*a4*b0*b1*b2*b3 + 4*a0*a2*a4*b0*b1*b2*b3 - a0*a2*a3*b1**2*b2*b3 + 3*a0*a1*a4*b1**2*b2*b3 - a1**2*a3*b0*b2**2*b3 + 2*a0*a2*a3*b0*b2**2*b3 + a0*a1*a4*b0*b2**2*b3 + a0*a1*a3*b1*b2**2*b3 - 4*a0**2*a4*b1*b2**2*b3 - a0**2*a3*b2**3*b3 + a2**3*b0**2*b3**2 - 3*a1*a2*a3*b0**2*b3**2 + 3*a0*a3**2*b0**2*b3**2 + 3*a1**2*a4*b0**2*b3**2 - 3*a0*a2*a4*b0**2*b3**2 - a1*a2**2*b0*b1*b3**2 + 2*a1**2*a3*b0*b1*b3**2 + a0*a2*a3*b0*b1*b3**2 - 5*a0*a1*a4*b0*b1*b3**2 + a0*a2**2*b1**2*b3**2 - 2*a0*a1*a3*b1**2*b3**2 + 2*a0**2*a4*b1**2*b3**2 + a1**2*a2*b0*b2*b3**2 - 2*a0*a2**2*b0*b2*b3**2 - a0*a1*a3*b0*b2*b3**2 + 4*a0**2*a4*b0*b2*b3**2 - a0*a1*a2*b1*b2*b3**2 + 3*a0**2*a3*b1*b2*b3**2 + a0**2*a2*b2**2*b3**2 - a1**3*b0*b3**3 + 3*a0*a1*a2*b0*b3**3 - 3*a0**2*a3*b0*b3**3 + a0*a1**2*b1*b3**3 - 2*a0**2*a2*b1*b3**3 - a0**2*a1*b2*b3**3 + a0**3*b3**4, a4**2*b1**3 - 2*a4**2*b0*b1*b2 - a3*a4*b1**2*b2 + a3*a4*b0*b2**2 + a2*a4*b1*b2**2 - a1*a4*b2**3 + a4**2*b0**2*b3 + a3*a4*b0*b1*b3 + a3**2*b1**2*b3 - 2*a2*a4*b1**2*b3 - a3**2*b0*b2*b3 - a2*a3*b1*b2*b3 + 3*a1*a4*b1*b2*b3 + a1*a3*b2**2*b3 - a0*a4*b2**2*b3 + a2*a3*b0*b3**2 - 2*a1*a4*b0*b3**2 + a2**2*b1*b3**2 - 2*a1*a3*b1*b3**2 + a0*a4*b1*b3**2 - a1*a2*b2*b3**2 + a0*a3*b2*b3**2 + a1**2*b3**3 - a0*a2*b3**3, a4*b2**2 - a4*b1*b3 - a3*b2*b3 + a2*b3**2, b3})
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, b0+b1*x+b2*x**2+b3*x**3+b4*x**4, x) == {a4**4*b0**4 - a3*a4**3*b0**3*b1 + a2*a4**3*b0**2*b1**2 - a1*a4**3*b0*b1**3 + a0*a4**3*b1**4 + a3**2*a4**2*b0**3*b2 - 2*a2*a4**3*b0**3*b2 - a2*a3*a4**2*b0**2*b1*b2 + 3*a1*a4**3*b0**2*b1*b2 + a1*a3*a4**2*b0*b1**2*b2 - 4*a0*a4**3*b0*b1**2*b2 - a0*a3*a4**2*b1**3*b2 + a2**2*a4**2*b0**2*b2**2 - 2*a1*a3*a4**2*b0**2*b2**2 + 2*a0*a4**3*b0**2*b2**2 - a1*a2*a4**2*b0*b1*b2**2 + 3*a0*a3*a4**2*b0*b1*b2**2 + a0*a2*a4**2*b1**2*b2**2 + a1**2*a4**2*b0*b2**3 - 2*a0*a2*a4**2*b0*b2**3 - a0*a1*a4**2*b1*b2**3 + a0**2*a4**2*b2**4 - a3**3*a4*b0**3*b3 + 3*a2*a3*a4**2*b0**3*b3 - 3*a1*a4**3*b0**3*b3 + a2*a3**2*a4*b0**2*b1*b3 - 2*a2**2*a4**2*b0**2*b1*b3 - a1*a3*a4**2*b0**2*b1*b3 + 4*a0*a4**3*b0**2*b1*b3 - a1*a3**2*a4*b0*b1**2*b3 + 2*a1*a2*a4**2*b0*b1**2*b3 + a0*a3*a4**2*b0*b1**2*b3 + a0*a3**2*a4*b1**3*b3 - 2*a0*a2*a4**2*b1**3*b3 - a2**2*a3*a4*b0**2*b2*b3 + 2*a1*a3**2*a4*b0**2*b2*b3 + a1*a2*a4**2*b0**2*b2*b3 - 5*a0*a3*a4**2*b0**2*b2*b3 + a1*a2*a3*a4*b0*b1*b2*b3 - 3*a0*a3**2*a4*b0*b1*b2*b3 - 3*a1**2*a4**2*b0*b1*b2*b3 + 4*a0*a2*a4**2*b0*b1*b2*b3 - a0*a2*a3*a4*b1**2*b2*b3 + 3*a0*a1*a4**2*b1**2*b2*b3 - a1**2*a3*a4*b0*b2**2*b3 + 2*a0*a2*a3*a4*b0*b2**2*b3 + a0*a1*a4**2*b0*b2**2*b3 + a0*a1*a3*a4*b1*b2**2*b3 - 4*a0**2*a4**2*b1*b2**2*b3 - a0**2*a3*a4*b2**3*b3 + a2**3*a4*b0**2*b3**2 - 3*a1*a2*a3*a4*b0**2*b3**2 + 3*a0*a3**2*a4*b0**2*b3**2 + 3*a1**2*a4**2*b0**2*b3**2 - 3*a0*a2*a4**2*b0**2*b3**2 - a1*a2**2*a4*b0*b1*b3**2 + 2*a1**2*a3*a4*b0*b1*b3**2 + a0*a2*a3*a4*b0*b1*b3**2 - 5*a0*a1*a4**2*b0*b1*b3**2 + a0*a2**2*a4*b1**2*b3**2 - 2*a0*a1*a3*a4*b1**2*b3**2 + 2*a0**2*a4**2*b1**2*b3**2 + a1**2*a2*a4*b0*b2*b3**2 - 2*a0*a2**2*a4*b0*b2*b3**2 - a0*a1*a3*a4*b0*b2*b3**2 + 4*a0**2*a4**2*b0*b2*b3**2 - a0*a1*a2*a4*b1*b2*b3**2 + 3*a0**2*a3*a4*b1*b2*b3**2 + a0**2*a2*a4*b2**2*b3**2 - a1**3*a4*b0*b3**3 + 3*a0*a1*a2*a4*b0*b3**3 - 3*a0**2*a3*a4*b0*b3**3 + a0*a1**2*a4*b1*b3**3 - 2*a0**2*a2*a4*b1*b3**3 - a0**2*a1*a4*b2*b3**3 + a0**3*a4*b3**4 + a3**4*b0**3*b4 - 4*a2*a3**2*a4*b0**3*b4 + 2*a2**2*a4**2*b0**3*b4 + 4*a1*a3*a4**2*b0**3*b4 - 4*a0*a4**3*b0**3*b4 - a2*a3**3*b0**2*b1*b4 + 3*a2**2*a3*a4*b0**2*b1*b4 + a1*a3**2*a4*b0**2*b1*b4 - 5*a1*a2*a4**2*b0**2*b1*b4 - a0*a3*a4**2*b0**2*b1*b4 + a1*a3**3*b0*b1**2*b4 - 3*a1*a2*a3*a4*b0*b1**2*b4 - a0*a3**2*a4*b0*b1**2*b4 + 3*a1**2*a4**2*b0*b1**2*b4 + 2*a0*a2*a4**2*b0*b1**2*b4 - a0*a3**3*b1**3*b4 + 3*a0*a2*a3*a4*b1**3*b4 - 3*a0*a1*a4**2*b1**3*b4 + a2**2*a3**2*b0**2*b2*b4 - 2*a1*a3**3*b0**2*b2*b4 - 2*a2**3*a4*b0**2*b2*b4 + 4*a1*a2*a3*a4*b0**2*b2*b4 + 2*a0*a3**2*a4*b0**2*b2*b4 - 3*a1**2*a4**2*b0**2*b2*b4 + 2*a0*a2*a4**2*b0**2*b2*b4 - a1*a2*a3**2*b0*b1*b2*b4 + 3*a0*a3**3*b0*b1*b2*b4 + 2*a1*a2**2*a4*b0*b1*b2*b4 + a1**2*a3*a4*b0*b1*b2*b4 - 8*a0*a2*a3*a4*b0*b1*b2*b4 + 2*a0*a1*a4**2*b0*b1*b2*b4 + a0*a2*a3**2*b1**2*b2*b4 - 2*a0*a2**2*a4*b1**2*b2*b4 - a0*a1*a3*a4*b1**2*b2*b4 + 4*a0**2*a4**2*b1**2*b2*b4 + a1**2*a3**2*b0*b2**2*b4 - 2*a0*a2*a3**2*b0*b2**2*b4 - 2*a1**2*a2*a4*b0*b2**2*b4 + 4*a0*a2**2*a4*b0*b2**2*b4 - 4*a0**2*a4**2*b0*b2**2*b4 - a0*a1*a3**2*b1*b2**2*b4 + 2*a0*a1*a2*a4*b1*b2**2*b4 + a0**2*a3*a4*b1*b2**2*b4 + a0**2*a3**2*b2**3*b4 - 2*a0**2*a2*a4*b2**3*b4 - a2**3*a3*b0**2*b3*b4 + 3*a1*a2*a3**2*b0**2*b3*b4 - 3*a0*a3**3*b0**2*b3*b4 + a1*a2**2*a4*b0**2*b3*b4 - 5*a1**2*a3*a4*b0**2*b3*b4 + 2*a0*a2*a3*a4*b0**2*b3*b4 + 5*a0*a1*a4**2*b0**2*b3*b4 + a1*a2**2*a3*b0*b1*b3*b4 - 2*a1**2*a3**2*b0*b1*b3*b4 - a0*a2*a3**2*b0*b1*b3*b4 - a1**2*a2*a4*b0*b1*b3*b4 + 10*a0*a1*a3*a4*b0*b1*b3*b4 - 8*a0**2*a4**2*b0*b1*b3*b4 - a0*a2**2*a3*b1**2*b3*b4 + 2*a0*a1*a3**2*b1**2*b3*b4 + a0*a1*a2*a4*b1**2*b3*b4 - 5*a0**2*a3*a4*b1**2*b3*b4 - a1**2*a2*a3*b0*b2*b3*b4 + 2*a0*a2**2*a3*b0*b2*b3*b4 + a0*a1*a3**2*b0*b2*b3*b4 + 3*a1**3*a4*b0*b2*b3*b4 - 8*a0*a1*a2*a4*b0*b2*b3*b4 + 2*a0**2*a3*a4*b0*b2*b3*b4 + a0*a1*a2*a3*b1*b2*b3*b4 - 3*a0**2*a3**2*b1*b2*b3*b4 - 3*a0*a1**2*a4*b1*b2*b3*b4 + 4*a0**2*a2*a4*b1*b2*b3*b4 - a0**2*a2*a3*b2**2*b3*b4 + 3*a0**2*a1*a4*b2**2*b3*b4 + a1**3*a3*b0*b3**2*b4 - 3*a0*a1*a2*a3*b0*b3**2*b4 + 3*a0**2*a3**2*b0*b3**2*b4 - a0*a1**2*a4*b0*b3**2*b4 + 2*a0**2*a2*a4*b0*b3**2*b4 - a0*a1**2*a3*b1*b3**2*b4 + 2*a0**2*a2*a3*b1*b3**2*b4 + a0**2*a1*a4*b1*b3**2*b4 + a0**2*a1*a3*b2*b3**2*b4 - 4*a0**3*a4*b2*b3**2*b4 - a0**3*a3*b3**3*b4 + a2**4*b0**2*b4**2 - 4*a1*a2**2*a3*b0**2*b4**2 + 2*a1**2*a3**2*b0**2*b4**2 + 4*a0*a2*a3**2*b0**2*b4**2 + 4*a1**2*a2*a4*b0**2*b4**2 - 4*a0*a2**2*a4*b0**2*b4**2 - 8*a0*a1*a3*a4*b0**2*b4**2 + 6*a0**2*a4**2*b0**2*b4**2 - a1*a2**3*b0*b1*b4**2 + 3*a1**2*a2*a3*b0*b1*b4**2 + a0*a2**2*a3*b0*b1*b4**2 - 5*a0*a1*a3**2*b0*b1*b4**2 - 3*a1**3*a4*b0*b1*b4**2 + 2*a0*a1*a2*a4*b0*b1*b4**2 + 5*a0**2*a3*a4*b0*b1*b4**2 + a0*a2**3*b1**2*b4**2 - 3*a0*a1*a2*a3*b1**2*b4**2 + 3*a0**2*a3**2*b1**2*b4**2 + 3*a0*a1**2*a4*b1**2*b4**2 - 3*a0**2*a2*a4*b1**2*b4**2 + a1**2*a2**2*b0*b2*b4**2 - 2*a0*a2**3*b0*b2*b4**2 - 2*a1**3*a3*b0*b2*b4**2 + 4*a0*a1*a2*a3*b0*b2*b4**2 - 3*a0**2*a3**2*b0*b2*b4**2 + 2*a0*a1**2*a4*b0*b2*b4**2 + 2*a0**2*a2*a4*b0*b2*b4**2 - a0*a1*a2**2*b1*b2*b4**2 + 2*a0*a1**2*a3*b1*b2*b4**2 + a0**2*a2*a3*b1*b2*b4**2 - 5*a0**2*a1*a4*b1*b2*b4**2 + a0**2*a2**2*b2**2*b4**2 - 2*a0**2*a1*a3*b2**2*b4**2 + 2*a0**3*a4*b2**2*b4**2 - a1**3*a2*b0*b3*b4**2 + 3*a0*a1*a2**2*b0*b3*b4**2 + a0*a1**2*a3*b0*b3*b4**2 - 5*a0**2*a2*a3*b0*b3*b4**2 - a0**2*a1*a4*b0*b3*b4**2 + a0*a1**2*a2*b1*b3*b4**2 - 2*a0**2*a2**2*b1*b3*b4**2 - a0**2*a1*a3*b1*b3*b4**2 + 4*a0**3*a4*b1*b3*b4**2 - a0**2*a1*a2*b2*b3*b4**2 + 3*a0**3*a3*b2*b3*b4**2 + a0**3*a2*b3**2*b4**2 + a1**4*b0*b4**3 - 4*a0*a1**2*a2*b0*b4**3 + 2*a0**2*a2**2*b0*b4**3 + 4*a0**2*a1*a3*b0*b4**3 - 4*a0**3*a4*b0*b4**3 - a0*a1**3*b1*b4**3 + 3*a0**2*a1*a2*b1*b4**3 - 3*a0**3*a3*b1*b4**3 + a0**2*a1**2*b2*b4**3 - 2*a0**3*a2*b2*b4**3 - a0**3*a1*b3*b4**3 + a0**4*b4**4, a4**3*b1**3 - 2*a4**3*b0*b1*b2 - a3*a4**2*b1**2*b2 + a3*a4**2*b0*b2**2 + a2*a4**2*b1*b2**2 - a1*a4**2*b2**3 + a4**3*b0**2*b3 + a3*a4**2*b0*b1*b3 + a3**2*a4*b1**2*b3 - 2*a2*a4**2*b1**2*b3 - a3**2*a4*b0*b2*b3 - a2*a3*a4*b1*b2*b3 + 3*a1*a4**2*b1*b2*b3 + a1*a3*a4*b2**2*b3 - a0*a4**2*b2**2*b3 + a2*a3*a4*b0*b3**2 - 2*a1*a4**2*b0*b3**2 + a2**2*a4*b1*b3**2 - 2*a1*a3*a4*b1*b3**2 + a0*a4**2*b1*b3**2 - a1*a2*a4*b2*b3**2 + a0*a3*a4*b2*b3**2 + a1**2*a4*b3**3 - a0*a2*a4*b3**3 - a3*a4**2*b0**2*b4 - a3**2*a4*b0*b1*b4 + 2*a2*a4**2*b0*b1*b4 - a3**3*b1**2*b4 + 3*a2*a3*a4*b1**2*b4 - 3*a1*a4**2*b1**2*b4 + a3**3*b0*b2*b4 - 2*a2*a3*a4*b0*b2*b4 + 2*a1*a4**2*b0*b2*b4 + a2*a3**2*b1*b2*b4 - 2*a2**2*a4*b1*b2*b4 - a1*a3*a4*b1*b2*b4 + 2*a0*a4**2*b1*b2*b4 - a1*a3**2*b2**2*b4 + 2*a1*a2*a4*b2**2*b4 - a2*a3**2*b0*b3*b4 + 3*a1*a3*a4*b0*b3*b4 - 2*a0*a4**2*b0*b3*b4 - a2**2*a3*b1*b3*b4 + 2*a1*a3**2*b1*b3*b4 + a1*a2*a4*b1*b3*b4 - 3*a0*a3*a4*b1*b3*b4 + a1*a2*a3*b2*b3*b4 - a0*a3**2*b2*b3*b4 - 3*a1**2*a4*b2*b3*b4 + 2*a0*a2*a4*b2*b3*b4 - a1**2*a3*b3**2*b4 + a0*a2*a3*b3**2*b4 + a0*a1*a4*b3**2*b4 + a2**2*a3*b0*b4**2 - a1*a3**2*b0*b4**2 - 2*a1*a2*a4*b0*b4**2 + 2*a0*a3*a4*b0*b4**2 + a2**3*b1*b4**2 - 3*a1*a2*a3*b1*b4**2 + 2*a0*a3**2*b1*b4**2 + 3*a1**2*a4*b1*b4**2 - 2*a0*a2*a4*b1*b4**2 - a1*a2**2*b2*b4**2 + 2*a1**2*a3*b2*b4**2 - 2*a0*a1*a4*b2*b4**2 + a1**2*a2*b3*b4**2 - a0*a2**2*b3*b4**2 - a0*a1*a3*b3*b4**2 + a0**2*a4*b3*b4**2 - a1**3*b4**3 + 2*a0*a1*a2*b4**3 - a0**2*a3*b4**3, a4**2*b2**2 - a4**2*b1*b3 - a3*a4*b2*b3 + a2*a4*b3**2 + a3*a4*b1*b4 + a3**2*b2*b4 - 2*a2*a4*b2*b4 - a2*a3*b3*b4 + a1*a4*b3*b4 + a2**2*b4**2 - a1*a3*b4**2, a4*b3 - a3*b4, 1})
+# ...
+
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, 0, x) == PSC(0, a0+a1*x+a2*x**2+a3*x**3+a4*x**4, x))
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, b0, x) == PSC(b0, a0+a1*x+a2*x**2+a3*x**3+a4*x**4, x))
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, b0+b1*x, x) == PSC(b0+b1*x, a0+a1*x+a2*x**2+a3*x**3+a4*x**4, x))
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, b0+b1*x+b2*x**2, x) == PSC(b0+b1*x+b2*x**2, a0+a1*x+a2*x**2+a3*x**3+a4*x**4, x))
+assert(PSC(a0+a1*x+a2*x**2+a3*x**3+a4*x**4, b0+b1*x+b2*x**2+b3*x**3, x) == PSC(b0+b1*x+b2*x**2+b3*x**3, a0+a1*x+a2*x**2+a3*x**3+a4*x**4, x))
+# ...
+
+
+
+# Other tests
+
+x, y = symbols('x, y')
 
 assert(PSC(0,0,y) == set())
 
@@ -19,18 +141,18 @@ assert(PSC(2*y,3*x,y) == {3*x})
 
 assert(PSC(2*y,3*x+5*y**2,y) == {12*x, 2})
 
-assert(PSC(y**3,y**3,y) == {1}) # The psc are [0, 0, 0, 1]
+assert(PSC(y**3,y**3,y) == {1}) # The psc are {0, 0, 0, 1}
 
-assert(PSC(y**3,y**3+y,y) == {1}) # The psc are [0, 1, 0, 1]
+assert(PSC(y**3,y**3+y,y) == {1}) # The psc are {0, 1, 0, 1}
 
-assert(PSC(x*y**3,y**3+y,y) == {1}) # The psc are (?) [0, x, 0, 1] but WolframAlpha says [0, x**2, 0, 1]
+assert(PSC(x*y**3,y**3+y,y) == {x**2, 1}) # The psc are {0, x**2, 0, 1}
 
 assert(
     PSC(
         x*y**2 + 6*x*y + x**3 + 9*x,
         x*y**2 + 6*x*y + x**3 + 9*x,
         y
-    ) == {1} # The psc are [0, 0, 1]
+    ) == {1} # The psc are {0, 0, 1}
 )
 
 assert(
