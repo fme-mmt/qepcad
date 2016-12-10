@@ -15,7 +15,7 @@ x = np.arange(-5, 5, 0.25)
 y = np.arange(-5, 5, 0.25)
 x, y = np.meshgrid(x, y)
 z = 0
-ax.plot_surface(x, y, z, color='b',alpha=0.5)
+ax.plot_surface(x, y, z, color='b', alpha=0.5)
 
 
 #paraboloid

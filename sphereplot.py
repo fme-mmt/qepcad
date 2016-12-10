@@ -48,7 +48,7 @@ y = np.linspace(-2, 2, 100)
 z = -2
 ax.plot(x, y, z, label='R Projection', color='g')
 
-# rallita vertical 2
+# rallita vertical 5
 x = np.linspace(2.5, 2.5, 100)
 y = np.linspace(-2, 2, 100)
 z = -2
