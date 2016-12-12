@@ -1,4 +1,4 @@
-#from sympy import *
+# from sympy import *
 from sympy import poly
 from sympy import degree, diff
 from sympy.abc import *
@@ -17,9 +17,9 @@ def SyHa(P, Q, j, v):
 
     p = P.degree(v)
     q = Q.degree(v)
-    #assert P.gens == Q.gens
-    coef = partial(coefs, p+q-j, v)
-    return Matrix([coef(P*v**k) for k in range(q-j-1, -1, -1)] + [coef(Q*v**k) for k in range(0, p-j, 1)])
+    # assert P.gens == Q.gens
+    coef = partial(coefs, p + q - j, v)
+    return Matrix([coef(P * v ** k) for k in range(q - j - 1, -1, -1)] + [coef(Q * v ** k) for k in range(0, p - j, 1)])
 
 
 def sRes(P, Q, j=-1, v=0):
@@ -33,14 +33,14 @@ def sRes(P, Q, j=-1, v=0):
     q = Q.degree(v)
 
     def sres(j):
-        n = p + q -2*j
-        if j==p:
+        n = p + q - 2 * j
+        if j == p:
             return sign(LC(P, v))
         elif p > j > q:
             return 0
         sh = SyHa(P, Q, j, v)
         assert sh.shape[0] == n
-        return (sh[:,:n]).det()
+        return (sh[:, :n]).det()
 
     if j == -1:
         return [sres(j) for j in range(p, -1, -1)]
@@ -176,10 +176,10 @@ def proj(proj_set):
 
 
 
-poly1 = poly(x**2 + y**2 - 4*x)
-poly2 = poly(x**2 + y**2 - 4*z)
-poly3 = poly(z)
-polys = [poly1, poly2, poly3]
-
-proj(polys)
+# poly1 = poly(x**2 + y**2 - 4*x)
+# poly2 = poly(x**2 + y**2 - 4*z)
+# poly3 = poly(z)
+# polys = [poly1, poly2, poly3]
+#
+# proj(polys)
 
