@@ -15,7 +15,6 @@ type Variable = Char
 
 newtype Monomial  = Monomial { exp :: M.Map Variable Int } deriving (Eq, Ord)
 
-
 instance Show Monomial where
     show m = let lm = M.toList $ exp m
          in if null lm
@@ -100,6 +99,7 @@ tunivariate z (T (k, Monomial m)) = T (p, Monomial mz) where
 
 
 toUnivariate :: (Num k, Eq k) => Variable -> Polynomial k -> UPolynomial (Polynomial k)
+fromUnivariate :: Eqnum r => Variable -> UPolynomial (Polynomial r) -> Polynomial r
 toUnivariate v p = UP $ foldl ins M.empty $
     map (exp . tunivariate v) $  toTerms p
   where ins m (e,c) = M.insertWith (+) e c m
@@ -107,6 +107,15 @@ toUnivariate v p = UP $ foldl ins M.empty $
             case M.toList m of
               []                -> (0, c)
               [(w, e)] | w == v -> (e, c)
+freeOf :: Variable -> Polynomial r -> Bool
+freeOf v p =  not $ or [v `elem` (M.keys m) | T (_, Monomial m) <- toTerms p]
+fromUnivariate v p =
+  if all (freeOf v) (P.toList p)
+  then fromTerms $ [T (c, expand i m) | (i, u) <- M.toList (P.coeffs p), T (c, m) <- toTerms u]
+  else error $ "Not free from " ++ show v
+  where expand :: Int -> Monomial -> Monomial
+        expand j  (Monomial m) = Monomial $ M.insert v j m
+
 
 
 
@@ -178,10 +187,6 @@ ltf p = case toTerms p of
 
 lcof = maybe 0 (\(T (c,_)) -> c) . ltf
 
-p :: Polynomial Integer
-p = x^2 + y^2 + z^2 -1 where
-  [x,y,z] = map (fromTerms . (:[]) . tvar)  "xyz"
-
 
 
 instance Eqnum r => Eqnum (Polynomial r)
@@ -202,28 +207,24 @@ instance (Eqnum r, Sympy r) => Sympy (Polynomial r) where
   sympy = L.intercalate " + " . map sympy .toTerms
 
 
+type UPoly r = UPolynomial (Polynomial r)
 
-proj1, proj2, proj3 :: (Ord r, Eqnum r) => [UPolynomial (Polynomial r)] -> [S.Set (Polynomial r)]
-proj1 ps = [P.psc p (P.diff p) | p <- ps, P.deg p >= 2]
-proj2 ps = [P.psc p q | (i,p) <- eps, (j,q) <- eps, i/=j, min (P.deg p) (P.deg q) >= 1]
+proj1, proj2, proj3 :: (Ord r, Eqnum r) => [UPoly r] -> [S.Set (UPoly r)]
+proj1 ps = [psc' p (P.diff p) | p <- ps, P.deg p >= 2]
+  where psc' p q = S.map P.const $ P.psc p q
+proj2 ps = [psc' p q | (i,p) <- eps, (j,q) <- eps, i/=j, min (P.deg p) (P.deg q) >= 1]
   where eps = zip [0..] ps
-proj3 ps = undefined -- [S.fromList [lc p] | p <- ps, deg p >=1 , (not . isConstant . lc) p]
+        psc' p q = S.map P.const $ P.psc p q
+proj3 ps = [S.fromList [P.const (P.lc p), P.tail p] | p <- ps, P.deg p >= 1 , (not . isConstant . P.lc) p]
 
-type SetPoly r = S.Set (Polynomial r)
+type SetPoly r = S.Set (UPoly r)
 
-proj' :: (Ord r, Eqnum r) => Variable -> SetPoly r -> SetPoly r
-proj' v ps = S.filter notConst . S.unions $ proj1 ps' ++ proj2 ps' where
-  ps' = map (toUnivariate v) . S.toList $ ps
-  notConst = not . Polynomial.isConstant
-
-proj :: (Ord r, Eqnum r) => [Variable] -> SetPoly r -> [SetPoly r]
-proj [] ps  = []
-proj (v:vs) ps =
-  let ps' = proj' v ps
-  in ps':(proj vs ps')
+trivial :: Eqnum r => UPoly r -> Bool
+trivial = all isConstant . P.toList
 
 
-main :: IO ()
-main = do
-  let ps = S.fromList [p]
-  mapM_ print $ proj "zy" ps
+proj :: (Ord r, Eqnum r) => Variable -> S.Set (Polynomial r) -> SetPoly r
+proj v ps = ft trivial $ ss
+  where ps' = map (toUnivariate v) . S.toList $ ps
+        ft f = S.filter (not . f)
+        ss = S.unions . concat $ map (\f -> f ps') [proj1, proj2, proj3]

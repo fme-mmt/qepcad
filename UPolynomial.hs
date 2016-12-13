@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
 module UPolynomial where
 import qualified Data.Map as M
 import qualified Data.Set as S
@@ -5,15 +6,23 @@ import Data.List (intercalate)
 import Data.Ord (comparing)
 import Data.Matrix (fromLists, Matrix, nrows, submatrix, detLaplace)
 import Prelude hiding (filter, lookup, const, tail)
+import Data.Ratio (numerator, denominator)
 
 newtype UPolynomial r = UP { coeffs :: M.Map Int r } deriving Show
 
 const :: Eqnum r => r -> UPolynomial r
 deg :: Eqnum r => UPolynomial r -> Int
+cof :: Num r => Int -> UPolynomial r -> Maybe r
+lcof :: Eqnum r => UPolynomial r -> Maybe r
+
 deg 0 = minBound
 deg p = maximum . M.keys $ coeffs p
 const 0 = UP M.empty
 const c = UP $ M.singleton 0 c
+cof _ p | iszero p  = Nothing
+cof j p | otherwise = Just . maybe 0 id . M.lookup j $ coeffs p
+lcof p | iszero p  = Nothing
+lcof p | otherwise = cof (deg p) p
 
 toList :: Eqnum r => UPolynomial r -> [r]
 fromList :: [r] -> UPolynomial r
@@ -26,20 +35,22 @@ iszero = null . coeffs
 
 class (Eq r, Num r) => Eqnum r
 type Z = Integer
-instance Eqnum Integer
+type Q = Rational
+instance Eqnum Z
+instance Eqnum Q
 instance Eqnum r => Eqnum (UPolynomial r)
 
 simplify :: Eqnum r => UPolynomial r -> UPolynomial r
 simplify = UP . M.filter (/=0) . coeffs
 
-instance Eqnum r => Ord (UPolynomial r) where
+instance (Ord r, Eqnum r) => Ord (UPolynomial r) where
   compare p q =
     case comparing deg p q of
-      EQ -> if p == 0
-            then EQ
-            else case comparing lt p q of
-                  EQ -> comparing tail p q
-                  o  -> o
+      EQ -> case (lcof p, lcof q) of
+              (Just cp, Just cq) -> compare cp cq
+              (Nothing, Just _)  -> LT
+              (Just _, Nothing)  -> GT
+              _                  -> EQ
       o -> o
 
 
@@ -79,6 +90,18 @@ tail p = simplify $ p - lt p
 diff (UP m) = UP $ flist [(i-1, fromIntegral i * c) | (i,c) <- tlist m, i/=0]
   where flist = M.fromList
         tlist = M.toList
+
+
+eval :: Eqnum r => r -> UPolynomial r -> r
+eval x =
+  foldr (\c y -> c + x * y) 0  . toList
+
+remainder :: (Fractional r,  Eqnum r) => UPolynomial r -> UPolynomial r -> UPolynomial r
+remainder p q | deg p < deg q = p
+remainder p q | otherwise = remainder (simplify $ p - c * q) q where
+  Just b0 = lcof q
+  Just a0 = lcof p
+  c = UP $ M.singleton (deg p - deg q) (a0/b0)
 
 
 
@@ -127,11 +150,10 @@ psc p q = S.fromList $  sub $ sylvester p q where
 class Sympy a where
   sympy :: a -> String
 
-instance Sympy Integer where
+instance Sympy Z where
   sympy n = show n
+instance Sympy Q where
+  sympy q = show (numerator q) ++ "/" ++ show (denominator q)
 
 instance (Eqnum r, Sympy r) => Sympy (UPolynomial r) where
   sympy p =  intercalate " + " $ zipWith (\c e -> "(" ++ sympy c ++ ")*X^" ++ show e) (toList p) [0..]
-
-x :: UPolynomial Z
-x = fromList [0, 1]

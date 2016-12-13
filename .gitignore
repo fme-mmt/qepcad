@@ -89,3 +89,6 @@ ENV/
 .ropeproject
 # OSX 
 .DS_Store
+# Haskell
+*.hi
+*.o
