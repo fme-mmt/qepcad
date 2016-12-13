@@ -11,27 +11,32 @@ def PSC(F, G, x):
     coefficients (psc) of the two polynomials F and G with respect to the
     variable x.
     
-    The n-th psc, where n is the minimum of the degrees of F and G with
-    respect to x, is defined as 1. Extended psc beyond the n-th are not
-    considered.
+    If the degree of the polynomial F is strictly less than the degree of
+    the polynomial G, then F and G are interchanged.
+    
+    Extended psc beyond the n-th are not considered, where n is the minimum
+    of the degrees of F and G with respect to x.
 
-    >>> PSC(0, 0, var('y'))
+    >>> PSC(0, 0, var('x'))
     set()
-    >>> PSC(poly('2*y'), poly('3*x'), var('y'))
-    {1}
-    >>> PSC(poly('2*y'), poly('3*x + 5*y**2'), var('y'))
-    {12*x, 1}
-    >>> PSC(poly('y**3'), poly('y**3 + y'), var('y'))
+    >>> PSC(poly('2*x'), poly('3*y'), var('x'))
+    {3*y}
+    >>> PSC(poly('2*x'), poly('3*y + 5*x**2'), var('x')) == {12*var('y'), 2}
+    True
+    >>> PSC(poly('x**3'), poly('x**3 + x'), var('x'))
     {1}
     """
+    subs = subresultants(F, G, x)
     s = set()
-    n = min( degree(F,x), degree(G,x) )
-    if n < 0:
+    i = len(subs) - 1
+    if i < 0:
         return s
-    subs = subresultants(F, G, x)[2:]
-    for p in reversed(subs):
-        s.add( LC(p, x) )
-    s.add(1); # SIAM defines it as 1 but WolframAlpha sometimes says otherwise
+    currDeg = degree(subs[i], x)
+    while i > 0:
+        nextDeg = degree(subs[i-1], x)
+        s.add( LC(subs[i], x)**(nextDeg-currDeg) )
+        currDeg = nextDeg
+        i -= 1
     return s
 
 
