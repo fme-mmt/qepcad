@@ -1,12 +1,18 @@
 module Polynomial where
 import qualified Data.Map as M
 import Data.Char (Char)
+import Data.Maybe (fromMaybe)
 import qualified Data.Set as S
 import Data.Ord (comparing)
 import qualified Data.List as L
 import Prelude hiding (exp)
-import UPolynomial (UPolynomial(UP), Eqnum, Sympy(..))
-import qualified UPolynomial as P
+import UPolynomial
+import Subresultant (psrc)
+
+
+
+class HasConstants r where
+  isConstant :: r -> Bool
 
 minf :: Int
 minf = minBound
@@ -24,7 +30,7 @@ instance Show Monomial where
                 shvar (v,1) = [v]
                 shvar (v,d) = v:("^" ++ show d)
 
-instance (Num k, Eq k, Show k) => Show (Polynomial k) where
+instance (Num k, Eq k, Show k, HasConstants k) => Show (Polynomial k) where
     show p = case toTerms p of
         [] -> "0"
         ts -> L.intercalate " + " . map show $ ts
@@ -46,10 +52,11 @@ mdeg v (Monomial m) = maybe 0 id $ M.lookup v m
 
 newtype Term k = T (k, Monomial)
 
-instance (Num k, Eq k, Show k) => Show (Term k) where
+instance (Num k, Eq k, Show k, HasConstants k) => Show (Term k) where
     show (T (0, _)) = "0"
-    -- show (T (1, m)) = show m
-    show (T (c, m)) = "(" ++ show c ++ ") " ++ show m
+    show (T (1, m)) = show m
+    show (T (c, m)) | isConstant c = show c ++ show m
+    show (T (c, m))                = "(" ++ show c ++ ")" ++ show m
 
 
 tconst :: k -> Term k
@@ -68,19 +75,20 @@ tmult (T (c1,m1)) (T (c2,m2)) = T (cm, mm) where
     mm = Monomial $ M.unionWith (+) (exp m1) (exp m2)
 tmvar (T (_,m)) = mmvar m
 
-newtype Polynomial k = Poly { coeffs :: M.Map Monomial k }
+newtype Polynomial k = Poly (M.Map Monomial k)
     deriving (Eq, Ord)
 
 instance (Eq k, Num k) => Num (Polynomial k) where
-    (+) = plus
-    (*) = times
-    abs = undefined
-    signum = undefined
-    negate = neg
-    fromInteger n = constant (fromInteger n)
+  negate (Poly cs) = Poly (M.map negate cs)
+  (Poly p) + (Poly q) = Poly $ M.unionWith (+) p q
+  p * q = fromTerms pqs where
+    pqs = [tmult tp tq  | tp <- toTerms p, tq <- toTerms q]
+  abs = undefined
+  signum = undefined
+  fromInteger n = constant (fromInteger n)
 
 instance Functor Polynomial where
-    fmap f = Poly . fmap f . coeffs
+    fmap f (Poly cs) = Poly $ fmap f cs
 
 
 tvars :: Term k  ->  S.Set Variable
@@ -98,20 +106,23 @@ tunivariate z (T (k, Monomial m)) = T (p, Monomial mz) where
     p = fromTerms [T (k, Monomial mnz)]
 
 
-toUnivariate :: (Num k, Eq k) => Variable -> Polynomial k -> UPolynomial (Polynomial k)
-fromUnivariate :: Eqnum r => Variable -> UPolynomial (Polynomial r) -> Polynomial r
-toUnivariate v p = UP $ foldl ins M.empty $
-    map (exp . tunivariate v) $  toTerms p
+toUnivariate   :: (Num r, Eq r) => Variable -> Polynomial r -> UPolynomial (Polynomial r)
+fromUnivariate :: (Num r, Eq r) => Variable -> UPolynomial (Polynomial r) -> Polynomial r
+toUnivariate v p = Upol . normal . reverse $ cs
   where ins m (e,c) = M.insertWith (+) e c m
         exp (T (c, Monomial m)) =
             case M.toList m of
               []                -> (0, c)
               [(w, e)] | w == v -> (e, c)
+        mp = foldl ins M.empty . map (exp . tunivariate v) $ toTerms p
+        d = maximum $ M.keys mp
+        cs = [fromMaybe 0 (M.lookup k mp) | k <- [0..d]]
+
 freeOf :: Variable -> Polynomial r -> Bool
 freeOf v p =  not $ or [v `elem` (M.keys m) | T (_, Monomial m) <- toTerms p]
 fromUnivariate v p =
-  if all (freeOf v) (P.toList p)
-  then fromTerms $ [T (c, expand i m) | (i, u) <- M.toList (P.coeffs p), T (c, m) <- toTerms u]
+  if all (freeOf v) (coeffs p)
+  then fromTerms $ [T (c, expand i m) | (u, i) <- enumerate p, T (c, m) <- toTerms u]
   else error $ "Not free from " ++ show v
   where expand :: Int -> Monomial -> Monomial
         expand j  (Monomial m) = Monomial $ M.insert v j m
@@ -120,16 +131,19 @@ fromUnivariate v p =
 
 
 mone :: Monomial
+single :: Num r => Variable -> Polynomial r
 mone = Monomial M.empty
+single v = Poly $ M.singleton m 1 where
+  m = Monomial $ M.singleton v 1
 
 constant :: (Num k, Eq k) => k -> Polynomial k
-isConstant :: Polynomial k -> Bool
 constant k = fromTerms [tconst k]
-isConstant p = case toTerms  p of
-  []                  -> True
-  [T (_, Monomial m)] -> M.null m
-  _                   -> False
 
+instance HasConstants (Polynomial r) where
+  isConstant p = case toTerms  p of
+    []                  -> True
+    [T (_, Monomial m)] -> M.null m
+    _                   -> False
 
 
 fromTerms :: (Eq k, Num k) => [Term k] -> Polynomial k
@@ -142,10 +156,9 @@ toTerms (Poly ps) = map (\(m,c) -> T (c,m)) $ M.toList ps
 simplify :: (Num k, Eq k) => Polynomial k -> Polynomial k
 simplify = fromTerms . toTerms
 
-neg p = Poly (M.map negate $ coeffs p)
-plus (Poly p) (Poly q) = Poly $ M.unionWith (+) p q
-times p q = fromTerms pqs where
-    pqs = [tmult tp tq  | tp <- toTerms p, tq <- toTerms q]
+fullsimplify :: (Eq r, Num r) => UPoly r -> UPoly r
+fullsimplify = Upol . filter (/=0) . map Polynomial.simplify . coeffs
+
 
 degree :: Variable -> Polynomial k -> Int
 ltf :: Polynomial k -> Maybe (Term k)
@@ -163,20 +176,6 @@ level vs p = case (mvar p) of
             _      -> Nothing
 maindeg p = maybe minf (flip degree p) (mvar p)
 
-toArray :: Num k => Int -> Polynomial k -> [k]
-toArray n p =
-   case S.toList $ vars [p] of
-        [v] -> reverse . map snd . M.toList $ mp `M.union` mz v
-        []  -> case toTerms p of
-                 []  -> take n $ repeat 0
-                 [T (c,_)]  -> reverse $ c:(take (n-1) $ repeat 0)
-        _   -> error "not univariate"
-     where
-       m 0 _ = Monomial M.empty
-       m i v = Monomial $ M.singleton v i
-       mp = coeffs p
-       mz v = M.fromList [(m k v, 0) | k <- [0..n-1]]
-
 degree v = maximum . map (tdeg v) . toTerms
 
 ltf p = case toTerms p of
@@ -189,42 +188,25 @@ lcof = maybe 0 (\(T (c,_)) -> c) . ltf
 
 
 
-instance Eqnum r => Eqnum (Polynomial r)
-
-instance Sympy Monomial where
-  sympy m = if null s then "1" else s where
-    s = concat [(v:'^':show e) | (v,e) <- M.toList . exp $ m,  e/=0]
-
-instance (Eqnum r, Sympy r) => Sympy (Term r) where
-  sympy (T (0,m)) = "0"
-  sympy (T (1,m)) = sympy m
-  sympy (T (c,m)) = sympy c ++ " " ++
-      (case sympy m of
-          "1" -> ""
-          sm  -> sm)
-
-instance (Eqnum r, Sympy r) => Sympy (Polynomial r) where
-  sympy = L.intercalate " + " . map sympy .toTerms
+toMonic :: (Eq r, Fractional r) => Polynomial r -> Polynomial r
+toMonic p = fmap (/c0) p where c0 = lcof p
 
 
 type UPoly r = UPolynomial (Polynomial r)
 
-proj1, proj2, proj3 :: (Ord r, Eqnum r) => [UPoly r] -> [S.Set (UPoly r)]
-proj1 ps = [psc' p (P.diff p) | p <- ps, P.deg p >= 2]
-  where psc' p q = S.map P.const $ P.psc p q
-proj2 ps = [psc' p q | (i,p) <- eps, (j,q) <- eps, i/=j, min (P.deg p) (P.deg q) >= 1]
-  where eps = zip [0..] ps
-        psc' p q = S.map P.const $ P.psc p q
-proj3 ps = [S.fromList [P.const (P.lc p), P.tail p] | p <- ps, P.deg p >= 1 , (not . isConstant . P.lc) p]
 
-type SetPoly r = S.Set (UPoly r)
-
-trivial :: Eqnum r => UPoly r -> Bool
-trivial = all isConstant . P.toList
-
-
-proj :: (Ord r, Eqnum r) => Variable -> S.Set (Polynomial r) -> SetPoly r
-proj v ps = ft trivial $ ss
-  where ps' = map (toUnivariate v) . S.toList $ ps
-        ft f = S.filter (not . f)
-        ss = S.unions . concat $ map (\f -> f ps') [proj1, proj2, proj3]
+proj :: (Show r, Ord r, Num r, HasConstants r) => S.Set (UPoly r) -> S.Set (Polynomial r)
+proj sps = S.unions $ map (\f -> f ps) [proj1, proj2, proj3, proj4] where
+  ps = S.toList sps
+  purge = S.fromList . filter (not . isConstant) . map Polynomial.simplify
+  proj1 ps = purge [psrc j p (sep p) | p <- ps, let d = deg p,  d >= 2, j <- [0..d - 1]]
+  proj2 ps = purge [psrc j p q | (k,p) <- ps', (l,q) <- ps', k < l, let d = min (deg p) (deg q), d >= 1, j <- [0..d-1]] -- must be [0..d]
+    where ps' = zip [0..] ps
+  proj3 ps = pj1 `S.union`  pj2
+    where pj1 = S.fromList $ map (lc . snd) ps'
+          pj2 = S.unions $ map (ipj . fst) ps'
+          ipj j = let (p1, (p:p2)) = splitAt j ps
+                  in proj $ S.fromList $ (trunc p):(p1++p2)
+          ps' = filter (cond . snd) $ zip [0..] ps
+          cond p = deg p >= 1 && (not . isConstant . lc) p
+  proj4 ps = S.fromList [c | p <- ps, deg p == 0, let c = lc p, not . isConstant $ c]
