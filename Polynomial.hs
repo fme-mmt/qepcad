@@ -25,7 +25,7 @@ instance Show Monomial where
     show m = let lm = M.toList $ exp m
          in if null lm
             then ""
-            else concat $ map shvar lm  where
+            else concatMap shvar lm  where
                 shvar (_,0) = ""
                 shvar (v,1) = [v]
                 shvar (v,d) = v:("^" ++ show d)
@@ -46,9 +46,9 @@ mdiff v  (Monomial m) = (i, Monomial m') where
 
 mmvar m = case M.keys (exp m) of
             []  -> Nothing
-            vs -> Just . head . L.reverse . L.sort $ vs
+            vs -> Just . last . L.sort $ vs
 
-mdeg v (Monomial m) = maybe 0 id $ M.lookup v m
+mdeg v (Monomial m) = fromMaybe 0 $ M.lookup v m
 
 newtype Term k = T (k, Monomial)
 
@@ -58,6 +58,18 @@ instance (Num k, Eq k, Show k, HasConstants k) => Show (Term k) where
     show (T (c, m)) | isConstant c = show c ++ show m
     show (T (c, m))                = "(" ++ show c ++ ")" ++ show m
 
+
+isUnivariate :: Polynomial r -> Bool
+reduce :: (Num r, Eq r) => Polynomial r -> Maybe (UPolynomial r)
+isUnivariate = (<=1) . S.size . vars . (:[])
+reduce p = if isUnivariate p
+  then Just $ fromMap mp
+  else Nothing
+  where
+    mp = foldr (\(e, c) m -> M.insertWith (+) e c m) M.empty [(exp m, c) | T (c, m) <- toTerms p]
+    exp (Monomial m) = case M.elems m of
+            [] -> 0
+            [e]  -> e
 
 tconst :: k -> Term k
 tvar :: Num k => Variable -> Term k
@@ -119,10 +131,10 @@ toUnivariate v p = Upol . normal . reverse $ cs
         cs = [fromMaybe 0 (M.lookup k mp) | k <- [0..d]]
 
 freeOf :: Variable -> Polynomial r -> Bool
-freeOf v p =  not $ or [v `elem` (M.keys m) | T (_, Monomial m) <- toTerms p]
+freeOf v p =  not $ or [v `elem` M.keys m | T (_, Monomial m) <- toTerms p]
 fromUnivariate v p =
   if all (freeOf v) (coeffs p)
-  then fromTerms $ [T (c, expand i m) | (u, i) <- enumerate p, T (c, m) <- toTerms u]
+  then fromTerms [T (c, expand i m) | (u, i) <- enumerate p, T (c, m) <- toTerms u]
   else error $ "Not free from " ++ show v
   where expand :: Int -> Monomial -> Monomial
         expand j  (Monomial m) = Monomial $ M.insert v j m
@@ -166,15 +178,15 @@ lcof :: (Eq k,Num k) => Polynomial k ->  k
 mvar :: Polynomial r -> Maybe Variable
 level :: [Variable] -> Polynomial r -> Maybe Int
 maindeg :: Polynomial r -> Int
-mvar p = case L.reverse . L.sort . S.toList $ vars [p] of
+mvar p = case L.sortBy (flip compare) . S.toList $ vars [p] of
     []  -> Nothing
     v:_ -> Just v
-level vs p = case (mvar p) of
+level vs p = case mvar p of
             Just v -> case L.elemIndex v vs of
                          Just k -> Just k
                          _ -> Nothing
             _      -> Nothing
-maindeg p = maybe minf (flip degree p) (mvar p)
+maindeg p = maybe minf (`degree` p) (mvar p)
 
 degree v = maximum . map (tdeg v) . toTerms
 
@@ -205,8 +217,8 @@ proj sps = S.unions $ map (\f -> f ps) [proj1, proj2, proj3, proj4] where
   proj3 ps = pj1 `S.union`  pj2
     where pj1 = S.fromList $ map (lc . snd) ps'
           pj2 = S.unions $ map (ipj . fst) ps'
-          ipj j = let (p1, (p:p2)) = splitAt j ps
-                  in proj $ S.fromList $ (trunc p):(p1++p2)
+          ipj j = let (p1, p:p2) = splitAt j ps
+                  in proj $ S.fromList $ trunc p:(p1++p2)
           ps' = filter (cond . snd) $ zip [0..] ps
           cond p = deg p >= 1 && (not . isConstant . lc) p
   proj4 ps = S.fromList [c | p <- ps, deg p == 0, let c = lc p, not . isConstant $ c]

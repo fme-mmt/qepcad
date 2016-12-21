@@ -2,7 +2,7 @@
              FlexibleInstances,
              FlexibleContexts #-}
 module UPolynomial where
-import Data.Map (lookup, insertWith, empty)
+import Data.Map (lookup, insertWith, empty, keys, Map)
 import Data.List (intercalate)
 import Data.Ord (comparing)
 import Data.Maybe (fromMaybe, mapMaybe)
@@ -17,6 +17,13 @@ instance Functor UPolynomial where
 
 instance (Num r, Eq r) => Eq (UPolynomial r) where
   (Upol ps) == (Upol qs) = (normal ps) == (normal qs)
+
+
+fromMap :: (Num r, Eq r) => Map Int r -> UPolynomial r
+fromMap mp =  Upol . normal . reverse $ cs where
+  cs = [fromMaybe 0 (lookup e mp) | e <- [0..d]]
+  d = maximum $ keys mp
+
 
 normal :: (Num r, Eq r) => [r] -> [r]
 unormal :: Num r => Int -> [r] -> [r]
